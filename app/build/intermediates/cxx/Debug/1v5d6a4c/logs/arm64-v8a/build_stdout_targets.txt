@@ -1,2 +1,3 @@
 ninja: Entering directory `/Users/forevermeng/AndroidStudioProjects/CallbackHandler/app/.cxx/Debug/1v5d6a4c/arm64-v8a'
-ninja: no work to do.
+[1/2] Building CXX object CMakeFiles/callbackhandler.dir/log/logging.cc.o
+[2/2] Linking CXX shared library /Users/forevermeng/AndroidStudioProjects/CallbackHandler/app/build/intermediates/cxx/Debug/1v5d6a4c/obj/arm64-v8a/libcallbackhandler.so

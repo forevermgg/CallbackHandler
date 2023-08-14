@@ -14,8 +14,6 @@
 namespace fml {
 
 namespace {
-
-#if !defined(OS_FUCHSIA)
 const char* const kLogSeverityNames[LOG_NUM_SEVERITIES] = {"INFO", "WARNING",
                                                            "ERROR", "FATAL"};
 
@@ -40,8 +38,6 @@ const char* StripPath(const char* path) {
   }
   return path;
 }
-#endif
-
 }  // namespace
 
 LogMessage::LogMessage(LogSeverity severity,

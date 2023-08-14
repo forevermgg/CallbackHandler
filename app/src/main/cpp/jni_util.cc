@@ -23,6 +23,7 @@ THREAD_LOCAL ThreadLocalUniquePtr<JNIDetach> tls_jni_detach;
 
 void InitJavaVM(JavaVM* vm) {
   // FML_DCHECK(g_jvm == nullptr);
+  FML_LOG(ERROR) << "InitJavaVM";
   g_jvm = vm;
 }
 

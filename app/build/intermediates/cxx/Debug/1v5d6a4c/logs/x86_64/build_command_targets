@@ -1,0 +1,5 @@
+/Users/forevermeng/Library/Android/sdk/cmake/3.22.1/bin/ninja \
+  -C \
+  /Users/forevermeng/AndroidStudioProjects/CallbackHandler/app/.cxx/Debug/1v5d6a4c/x86_64 \
+  callbackhandler \
+  chromium_android_linker

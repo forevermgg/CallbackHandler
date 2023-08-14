@@ -1,0 +1,4 @@
+/Users/forevermeng/Library/Android/sdk/cmake/3.22.1/bin/ninja \
+  -C \
+  /Users/forevermeng/AndroidStudioProjects/CallbackHandler/app/.cxx/Debug/4v1h3z4l/arm64-v8a \
+  callbackhandler

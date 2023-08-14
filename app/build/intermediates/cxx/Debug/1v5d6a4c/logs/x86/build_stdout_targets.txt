@@ -1,0 +1,21 @@
+ninja: Entering directory `/Users/forevermeng/AndroidStudioProjects/CallbackHandler/app/.cxx/Debug/1v5d6a4c/x86'
+[1/13] Building CXX object CMakeFiles/callbackhandler.dir/CallbackHandler.cpp.o
+[2/13] Building CXX object CMakeFiles/callbackhandler.dir/VirtualMachineEnv.cpp.o
+[3/13] Building CXX object CMakeFiles/callbackhandler.dir/debug.cpp.o
+[4/13] Building CXX object CMakeFiles/chromium_android_linker.dir/linker_jni_onload.cc.o
+[5/13] Building CXX object CMakeFiles/callbackhandler.dir/CallbackUtils.cpp.o
+[6/13] Building CXX object CMakeFiles/callbackhandler.dir/thread_local.cc.o
+/Users/forevermeng/AndroidStudioProjects/CallbackHandler/app/src/main/cpp/thread_local.cc:10:39: warning: expression result unused [-Wunused-value]
+  (pthread_key_create(&key_, destroy) == 0);
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ^  ~
+/Users/forevermeng/AndroidStudioProjects/CallbackHandler/app/src/main/cpp/thread_local.cc:13:71: warning: expression result unused [-Wunused-value]
+ThreadLocalPointer::~ThreadLocalPointer() { (pthread_key_delete(key_) == 0); }
+                                             ~~~~~~~~~~~~~~~~~~~~~~~~ ^  ~
+2 warnings generated.
+[7/13] Building CXX object CMakeFiles/callbackhandler.dir/linker_jni.cc.o
+[8/13] Building CXX object CMakeFiles/chromium_android_linker.dir/linker_jni.cc.o
+[9/13] Building CXX object CMakeFiles/callbackhandler.dir/load_library.cpp.o
+[10/13] Building CXX object CMakeFiles/callbackhandler.dir/jni_util.cc.o
+[11/13] Building CXX object CMakeFiles/callbackhandler.dir/native-lib.cpp.o
+[12/13] Linking CXX shared library /Users/forevermeng/AndroidStudioProjects/CallbackHandler/app/build/intermediates/cxx/Debug/1v5d6a4c/obj/x86/libchromium_android_linker.so
+[13/13] Linking CXX shared library /Users/forevermeng/AndroidStudioProjects/CallbackHandler/app/build/intermediates/cxx/Debug/1v5d6a4c/obj/x86/libcallbackhandler.so

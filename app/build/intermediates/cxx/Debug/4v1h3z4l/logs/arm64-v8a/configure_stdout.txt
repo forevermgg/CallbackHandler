@@ -1,0 +1,3 @@
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /Users/forevermeng/AndroidStudioProjects/CallbackHandler/app/.cxx/Debug/4v1h3z4l/arm64-v8a

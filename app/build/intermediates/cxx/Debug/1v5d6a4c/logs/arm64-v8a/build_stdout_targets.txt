@@ -1,2 +1,5 @@
 ninja: Entering directory `/Users/forevermeng/AndroidStudioProjects/CallbackHandler/app/.cxx/Debug/1v5d6a4c/arm64-v8a'
-ninja: no work to do.
+[1/4] Building CXX object CMakeFiles/chromium_android_linker.dir/linker_jni.cc.o
+[2/4] Building CXX object CMakeFiles/callbackhandler.dir/linker_jni.cc.o
+[3/4] Linking CXX shared library /Users/forevermeng/AndroidStudioProjects/CallbackHandler/app/build/intermediates/cxx/Debug/1v5d6a4c/obj/arm64-v8a/libchromium_android_linker.so
+[4/4] Linking CXX shared library /Users/forevermeng/AndroidStudioProjects/CallbackHandler/app/build/intermediates/cxx/Debug/1v5d6a4c/obj/arm64-v8a/libcallbackhandler.so

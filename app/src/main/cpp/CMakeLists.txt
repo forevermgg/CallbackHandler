@@ -43,6 +43,12 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         jni_util.cc
         linker_jni.h
         linker_jni.cc
+        log/log_level.h
+        log/log_settings.h
+        log/log_settings.cc
+        log/log_settings_state.cc
+        log/logging.h
+        log/logging.cc
         native-lib.cpp)
 
 add_library("chromium_android_linker" SHARED

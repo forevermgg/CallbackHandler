@@ -27,13 +27,4 @@
   TypeName() = delete;                                       \
   DISALLOW_COPY_ASSIGN_AND_MOVE(TypeName)
 
-// true no error,false log_fault.
-#define CHECK(condition)                                         \
-  (condition) ? log_jni_debug << "File = " << __FILE__ << " Line = " << __LINE__ \
-                          << " condition = " << #condition                   \
-              : log_jni_fault << "File = " << __FILE__ << " Line = " << __LINE__ \
-                          << " condition = " << #condition;
-
-#define DCHECK(condition) CHECK(condition)
-
 #endif  // MACROS_H_

@@ -10,6 +10,7 @@
 #include <string>
 
 #include "thread_local.h"
+#include "log/logging.h"
 
 static JavaVM* g_jvm = nullptr;
 
@@ -20,9 +21,15 @@ struct JNIDetach {
 // Thread-local object that will detach from JNI during thread shutdown;
 THREAD_LOCAL ThreadLocalUniquePtr<JNIDetach> tls_jni_detach;
 
-void InitJavaVM(JavaVM* vm) { g_jvm = vm; }
+void InitJavaVM(JavaVM* vm) {
+  // FML_DCHECK(g_jvm == nullptr);
+  g_jvm = vm;
+}
 
 JNIEnv* AttachCurrentThread() {
+  FML_DCHECK(g_jvm != nullptr)
+      << "Trying to attach to current thread without calling InitJavaVM first.";
+
   JNIEnv* env = nullptr;
   if (g_jvm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_4) ==
       JNI_OK) {
@@ -40,15 +47,10 @@ JNIEnv* AttachCurrentThread() {
   } else {
     args.name = thread_name;
   }
-  jint ret = g_jvm->AttachCurrentThread(&env, &args);
-  __android_log_print(ANDROID_LOG_ERROR, "AttachCurrentThread",
-                      "AttachCurrentThread AttachCurrentThread");
-  if (!(JNI_OK == ret)) {
-    std::abort();
-  }
-  if (!(tls_jni_detach.get() == nullptr)) {
-    std::abort();
-  }
+  [[maybe_unused]] jint ret = g_jvm->AttachCurrentThread(&env, &args);
+  FML_DCHECK(JNI_OK == ret);
+
+  FML_DCHECK(tls_jni_detach.get() == nullptr);
   tls_jni_detach.reset(new JNIDetach());
 
   return env;

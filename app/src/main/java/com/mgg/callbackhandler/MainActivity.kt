@@ -13,6 +13,10 @@ import timber.log.Timber
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
+import java.io.File
+
+
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -28,6 +32,62 @@ class MainActivity : AppCompatActivity() {
         linker.loadLibrary("callbackhandler")
         binding.sampleText.text = stringFromJNI()
 
+        test()
+
+        val ainfo = this.applicationContext.packageManager.getApplicationInfo(
+            "com.mgg.callbackhandler",
+            PackageManager.GET_SHARED_LIBRARY_FILES
+        )
+        Log.e("ReadElf", "native library dir ${ainfo.nativeLibraryDir}")
+        Log.e(
+            "ReadElf",
+            "native library libcallbackhandler.so ${File(ainfo.nativeLibraryDir + File.separator + "libcallbackhandler.so").exists()}"
+        )
+        val appList = LocalAppDataSource.getApplicationList().toMutableList()
+
+        val lcItems = mutableListOf<LCItem>()
+        var progressCount = 0
+        for (info in appList) {
+            try {
+                lcItems.add(generateLCItemFromPackageInfo(info))
+                progressCount++
+                // updateInitProgress(progressCount * 100 / appList.size)
+            } catch (e: Throwable) {
+                Timber.e(e, "initItems: ${info.packageName}")
+                continue
+            }
+        }
+        Log.e(
+            "LocalAppDataSource",
+            "ApplicationList ${lcItems.size}"
+        )
+
+        val path = "file:///android_asset/libc++_shared.so" // 路径
+        val file = File(path)
+
+        val re: com.mgg.callbackhandler.ReadElf = com.mgg.callbackhandler.ReadElf(file)
+        re.getSymbol("x")
+        re.getDynamicSymbol("x")
+        re.close()
+    }
+
+    private fun generateLCItemFromPackageInfo(
+        pi: PackageInfo
+    ): LCItem {
+        return LCItem(
+            pi.packageName,
+            pi.getAppName() ?: "null",
+            pi.versionName ?: "null",
+            pi.getVersionCode(),
+            pi.firstInstallTime,
+            pi.lastUpdateTime,
+            (pi.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM) == ApplicationInfo.FLAG_SYSTEM,
+            pi.applicationInfo.targetSdkVersion.toShort(),
+            // variant
+        )
+    }
+
+    private fun test() {
         try {
             // Open the .so file and create a FileInputStream
             val fis = assets.open("libc++_shared.so")
@@ -115,50 +175,6 @@ class MainActivity : AppCompatActivity() {
         } catch (e: IOException) {
             Toast.makeText(applicationContext, "Failed to read the file", Toast.LENGTH_LONG).show()
         }
-
-        val ainfo = this.applicationContext.packageManager.getApplicationInfo(
-            "com.mgg.callbackhandler",
-            PackageManager.GET_SHARED_LIBRARY_FILES
-        )
-        Log.e("ReadElf", "native library dir ${ainfo.nativeLibraryDir}")
-        Log.e(
-            "ReadElf",
-            "native library libcallbackhandler.so ${File(ainfo.nativeLibraryDir + File.separator + "libcallbackhandler.so").exists()}"
-        )
-        val appList = LocalAppDataSource.getApplicationList().toMutableList()
-
-        val lcItems = mutableListOf<LCItem>()
-        var progressCount = 0
-        for (info in appList) {
-            try {
-                lcItems.add(generateLCItemFromPackageInfo(info))
-                progressCount++
-                // updateInitProgress(progressCount * 100 / appList.size)
-            } catch (e: Throwable) {
-                Timber.e(e, "initItems: ${info.packageName}")
-                continue
-            }
-        }
-        Log.e(
-            "LocalAppDataSource",
-            "ApplicationList ${lcItems.size}"
-        )
-    }
-
-    private fun generateLCItemFromPackageInfo(
-        pi: PackageInfo
-    ): LCItem {
-        return LCItem(
-            pi.packageName,
-            pi.getAppName() ?: "null",
-            pi.versionName ?: "null",
-            pi.getVersionCode(),
-            pi.firstInstallTime,
-            pi.lastUpdateTime,
-            (pi.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM) == ApplicationInfo.FLAG_SYSTEM,
-            pi.applicationInfo.targetSdkVersion.toShort(),
-            // variant
-        )
     }
 
     /**

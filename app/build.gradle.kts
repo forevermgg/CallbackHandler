@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.mgg.callbackhandler"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.mgg.callbackhandler"
         minSdk = 29
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -59,4 +59,5 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation("com.jakewharton.timber:timber:5.0.1")
 }

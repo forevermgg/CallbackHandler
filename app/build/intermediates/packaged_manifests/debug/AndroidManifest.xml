@@ -6,7 +6,9 @@
 
     <uses-sdk
         android:minSdkVersion="29"
-        android:targetSdkVersion="33" />
+        android:targetSdkVersion="34" />
+
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
 
     <permission
         android:name="com.mgg.callbackhandler.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
@@ -15,6 +17,7 @@
     <uses-permission android:name="com.mgg.callbackhandler.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
 
     <application
+        android:name="com.mgg.callbackhandler.LibCheckerApp"
         android:allowBackup="true"
         android:appComponentFactory="androidx.core.app.CoreComponentFactory"
         android:dataExtractionRules="@xml/data_extraction_rules"

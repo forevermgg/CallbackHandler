@@ -1,6 +1,0 @@
-com.mgg.callbackhandler.test.app-core-1.5.0-0 /Users/forevermeng/.gradle/caches/transforms-3/b115d4e24a339af803b31b27b1aed620/transformed/core-1.5.0/res
-com.mgg.callbackhandler.test.app-annotation-experimental-1.3.0-1 /Users/forevermeng/.gradle/caches/transforms-3/d02c4e7ca641920e4b0a47fced61b9da/transformed/annotation-experimental-1.3.0/res
-com.mgg.callbackhandler.test.app-androidTest-2 /Users/forevermeng/AndroidStudioProjects/CallbackHandler/app/build/generated/res/resValues/androidTest/debug
-com.mgg.callbackhandler.test.app-mergeDebugAndroidTestResources-3 /Users/forevermeng/AndroidStudioProjects/CallbackHandler/app/build/intermediates/incremental/debugAndroidTest/mergeDebugAndroidTestResources/merged.dir
-com.mgg.callbackhandler.test.app-mergeDebugAndroidTestResources-4 /Users/forevermeng/AndroidStudioProjects/CallbackHandler/app/build/intermediates/incremental/debugAndroidTest/mergeDebugAndroidTestResources/stripped.dir
-com.mgg.callbackhandler.test.app-merged_res-5 /Users/forevermeng/AndroidStudioProjects/CallbackHandler/app/build/intermediates/merged_res/debugAndroidTest

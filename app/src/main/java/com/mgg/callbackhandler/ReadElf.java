@@ -16,6 +16,8 @@ package com.mgg.callbackhandler;
  * limitations under the License.
  */
 
+import android.util.Log;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -223,7 +225,7 @@ public class ReadElf implements AutoCloseable {
     private void readHeader() throws IOException {
         mFile.seek(0);
         mFile.readFully(mBuffer, 0, EI_NIDENT);
-
+        Log.e("ReadElf", "Buffer EI_NIDENT = " + new String(mBuffer));
         if (mBuffer[0] != ELFMAG[0] || mBuffer[1] != ELFMAG[1] ||
                 mBuffer[2] != ELFMAG[2] || mBuffer[3] != ELFMAG[3]) {
             throw new IllegalArgumentException("Invalid ELF file: " + mPath);
@@ -247,7 +249,7 @@ public class ReadElf implements AutoCloseable {
         }
 
         mType = readHalf();
-
+        Log.e("ReadElf", "mType = " + mType);
         int e_machine = readHalf();
         if (e_machine != EM_386 && e_machine != EM_X86_64 &&
                 e_machine != EM_AARCH64 && e_machine != EM_ARM &&

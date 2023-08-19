@@ -13,11 +13,6 @@ import timber.log.Timber
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
-import java.io.File
-
-
-
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -34,41 +29,9 @@ class MainActivity : AppCompatActivity() {
 
         test()
 
-        val ainfo = this.applicationContext.packageManager.getApplicationInfo(
-            "com.mgg.callbackhandler",
-            PackageManager.GET_SHARED_LIBRARY_FILES
-        )
-        Log.e("ReadElf", "native library dir ${ainfo.nativeLibraryDir}")
-        Log.e(
-            "ReadElf",
-            "native library libcallbackhandler.so ${File(ainfo.nativeLibraryDir + File.separator + "libcallbackhandler.so").exists()}"
-        )
-        val appList = LocalAppDataSource.getApplicationList().toMutableList()
+        testLoader()
 
-        val lcItems = mutableListOf<LCItem>()
-        var progressCount = 0
-        for (info in appList) {
-            try {
-                lcItems.add(generateLCItemFromPackageInfo(info))
-                progressCount++
-                // updateInitProgress(progressCount * 100 / appList.size)
-            } catch (e: Throwable) {
-                Timber.e(e, "initItems: ${info.packageName}")
-                continue
-            }
-        }
-        Log.e(
-            "LocalAppDataSource",
-            "ApplicationList ${lcItems.size}"
-        )
-
-        val path = "file:///android_asset/libc++_shared.so" // 路径
-        val file = File(path)
-
-        val re: com.mgg.callbackhandler.ReadElf = com.mgg.callbackhandler.ReadElf(file)
-        re.getSymbol("x")
-        re.getDynamicSymbol("x")
-        re.close()
+        testAppList()
     }
 
     private fun generateLCItemFromPackageInfo(
@@ -175,6 +138,39 @@ class MainActivity : AppCompatActivity() {
         } catch (e: IOException) {
             Toast.makeText(applicationContext, "Failed to read the file", Toast.LENGTH_LONG).show()
         }
+    }
+
+    private fun testLoader() {
+        val ainfo = this.applicationContext.packageManager.getApplicationInfo(
+            "com.mgg.callbackhandler",
+            PackageManager.GET_SHARED_LIBRARY_FILES
+        )
+        Log.e("ReadElf", "native library dir ${ainfo.nativeLibraryDir}")
+        Log.e(
+            "ReadElf",
+            "native library libcallbackhandler.so ${File(ainfo.nativeLibraryDir + File.separator + "libcallbackhandler.so").exists()}"
+        )
+    }
+
+    private fun testAppList() {
+        val appList = LocalAppDataSource.getApplicationList().toMutableList()
+
+        val lcItems = mutableListOf<LCItem>()
+        var progressCount = 0
+        for (info in appList) {
+            try {
+                lcItems.add(generateLCItemFromPackageInfo(info))
+                progressCount++
+                // updateInitProgress(progressCount * 100 / appList.size)
+            } catch (e: Throwable) {
+                Timber.e(e, "initItems: ${info.packageName}")
+                continue
+            }
+        }
+        Log.e(
+            "LocalAppDataSource",
+            "ApplicationList ${lcItems.size}"
+        )
     }
 
     /**

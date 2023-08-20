@@ -17,4 +17,14 @@ JNIEnv* AttachCurrentThread();
 
 void DetachFromVM();
 
+// Sets the global Java VM instance, if it is not set yet.
+// Returns true on success.
+bool SetJavaVM(JNIEnv* env);
+
+// Determines if the global Java VM instance is available.
+bool HasJavaVM();
+
+// Returns the current JNI environment.
+JNIEnv* GetJNIEnv();
+
 #endif  // FLUTTER_FML_PLATFORM_ANDROID_JNI_UTIL_H_

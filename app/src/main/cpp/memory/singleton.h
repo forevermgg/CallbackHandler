@@ -250,9 +250,7 @@ class Singleton {
 };
 
 template <typename Type, typename Traits, typename DifferentiatingType>
-std::atomic<uintptr_t> Singleton<Type, Traits, DifferentiatingType>::instance_ =
-    0;
-
+std::atomic<uintptr_t> Singleton<Type, Traits, DifferentiatingType>::instance_ = 0;
 }  // namespace base
 
 #endif  // BASE_MEMORY_SINGLETON_H_

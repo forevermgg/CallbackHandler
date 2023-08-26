@@ -9,6 +9,7 @@
 #include "debug.h"
 #include "jni_util.h"
 #include "log/logging.h"
+#include "memory/mutex.h"
 
 using PFN_FROMHARDWAREBUFFER = AHardwareBuffer* (*)(JNIEnv*, jobject);
 static PFN_FROMHARDWAREBUFFER AHardwareBuffer_fromHardwareBuffer_fn = nullptr;

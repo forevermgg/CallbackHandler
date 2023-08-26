@@ -49,6 +49,8 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         log/log_settings_state.cc
         log/logging.h
         log/logging.cc
+        memory/mutex.h
+        memory/mutex_pthread.cc
         native-lib.cpp)
 
 add_library("chromium_android_linker" SHARED

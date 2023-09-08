@@ -17,14 +17,14 @@
 #include <jni.h>
 
 #include "VirtualMachineEnv.h"
-#include "jni_util.h"
+#include "jni_android.h"
+#include "log/log_level.h"
 #include "log/log_settings.h"
 #include "log/logging.h"
-#include "log/log_level.h"
 
-JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void* reserved) {
-  JNIEnv* env;
-  if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK) {
+JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved) {
+  JNIEnv *env;
+  if (vm->GetEnv(reinterpret_cast<void **>(&env), JNI_VERSION_1_6) != JNI_OK) {
     return -1;
   }
   fml::LogSettings log_settings;
@@ -32,7 +32,7 @@ JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void* reserved) {
   fml::SetLogSettings(log_settings);
   // This must be called when the library is loaded. We need this to get a
   // reference to the global VM
-  InitJavaVM(vm);
+  fml::jni::InitJavaVM(vm);
   VirtualMachineEnv::JNI_OnLoad(vm);
   return JNI_VERSION_1_6;
 }

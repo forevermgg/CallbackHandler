@@ -7,8 +7,8 @@
 
 #include <sstream>
 
-#include "log_level.h"
 #include "../macros.h"
+#include "log_level.h"
 
 namespace fml {
 
@@ -31,9 +31,7 @@ class LogMessageVoidify {
 
 class LogMessage {
  public:
-  LogMessage(LogSeverity severity,
-             const char* file,
-             int line,
+  LogMessage(LogSeverity severity, const char* file, int line,
              const char* condition);
   ~LogMessage();
 

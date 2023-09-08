@@ -93,140 +93,124 @@
 namespace chromium_android_linker {
 
 // Larger than the largest library we might attempt to load.
-    static const size_t kAddressSpaceReservationSize = 192 * 1024 * 1024;
+static const size_t kAddressSpaceReservationSize = 192 * 1024 * 1024;
 
 // A simple scoped UTF String class that can be initialized from
 // a Java jstring handle. Modeled like std::string, which cannot
 // be used here.
-    class String {
-    public:
-        String(JNIEnv* env, jstring str);
+class String {
+ public:
+  String(JNIEnv *env, jstring str);
 
-        inline ~String() { ::free(ptr_); }
+  inline ~String() { ::free(ptr_); }
 
-        inline const char* c_str() const { return ptr_ ? ptr_ : ""; }
-        inline size_t size() const { return size_; }
+  inline const char *c_str() const { return ptr_ ? ptr_ : ""; }
 
-    private:
-        char* ptr_;
-        size_t size_;
-    };
+  inline size_t size() const { return size_; }
+
+ private:
+  char *ptr_;
+  size_t size_;
+};
 
 // Returns true iff casting a java-side |address| to uintptr_t does not lose
 // bits.
-    bool IsValidAddress(jlong address);
+bool IsValidAddress(jlong address);
 
 // Find the jclass JNI reference corresponding to a given |class_name|.
 // |env| is the current JNI environment handle.
 // On success, return true and set |*clazz|.
-    bool InitClassReference(JNIEnv* env, const char* class_name, jclass* clazz);
+bool InitClassReference(JNIEnv *env, const char *class_name, jclass *clazz);
 
 // Finds the region reserved by the WebView zygote if the current process is
 // inherited from the modern enough zygote that has this reservation. If the
 // lookup is successful, returns true and sets |address| and |size|. Otherwise
 // returns false.
-    bool FindWebViewReservation(uintptr_t* address, size_t* size);
+bool FindWebViewReservation(uintptr_t *address, size_t *size);
 
 // Initialize a jfieldID corresponding to the field of a given |clazz|,
 // with name |field_name| and signature |field_sig|.
 // |env| is the current JNI environment handle.
 // On success, return true and set |*field_id|.
-    bool InitFieldId(JNIEnv* env,
-                     jclass clazz,
-                     const char* field_name,
-                     const char* field_sig,
-                     jfieldID* field_id);
+bool InitFieldId(JNIEnv *env, jclass clazz, const char *field_name,
+                 const char *field_sig, jfieldID *field_id);
 
 // Initialize a jfieldID corresponding to the static field of a given |clazz|,
 // with name |field_name| and signature |field_sig|.
 // |env| is the current JNI environment handle.
 // On success, return true and set |*field_id|.
-    bool InitStaticFieldId(JNIEnv* env,
-                           jclass clazz,
-                           const char* field_name,
-                           const char* field_sig,
-                           jfieldID* field_id);
+bool InitStaticFieldId(JNIEnv *env, jclass clazz, const char *field_name,
+                       const char *field_sig, jfieldID *field_id);
 
 // A class used to model the field IDs of the org.chromium.base.Linker
 // LibInfo inner class, used to communicate data with the Java side
 // of the linker.
-    struct LibInfo_class {
-        jfieldID load_address_id;
-        jfieldID load_size_id;
-        jfieldID relro_start_id;
-        jfieldID relro_size_id;
-        jfieldID relro_fd_id;
+struct LibInfo_class {
+  jfieldID load_address_id;
+  jfieldID load_size_id;
+  jfieldID relro_start_id;
+  jfieldID relro_size_id;
+  jfieldID relro_fd_id;
 
-        // Initialize an instance.
-        bool Init(JNIEnv* env) {
-            jclass clazz;
-            if (!InitClassReference(
-                    env, "org/chromium/base/library_loader/Linker$LibInfo", &clazz)) {
-                return false;
-            }
+  // Initialize an instance.
+  bool Init(JNIEnv *env) {
+    jclass clazz;
+    if (!InitClassReference(
+            env, "org/chromium/base/library_loader/Linker$LibInfo", &clazz)) {
+      return false;
+    }
 
-            return InitFieldId(env, clazz, "mLoadAddress", "J", &load_address_id) &&
-                   InitFieldId(env, clazz, "mLoadSize", "J", &load_size_id) &&
-                   InitFieldId(env, clazz, "mRelroStart", "J", &relro_start_id) &&
-                   InitFieldId(env, clazz, "mRelroSize", "J", &relro_size_id) &&
-                   InitFieldId(env, clazz, "mRelroFd", "I", &relro_fd_id);
-        }
+    return InitFieldId(env, clazz, "mLoadAddress", "J", &load_address_id) &&
+           InitFieldId(env, clazz, "mLoadSize", "J", &load_size_id) &&
+           InitFieldId(env, clazz, "mRelroStart", "J", &relro_start_id) &&
+           InitFieldId(env, clazz, "mRelroSize", "J", &relro_size_id) &&
+           InitFieldId(env, clazz, "mRelroFd", "I", &relro_fd_id);
+  }
 
-        void SetLoadInfo(JNIEnv* env,
-                         jobject library_info_obj,
-                         uintptr_t load_address,
-                         size_t load_size) {
-            env->SetLongField(library_info_obj, load_address_id, load_address);
-            env->SetLongField(library_info_obj, load_size_id, load_size);
-        }
+  void SetLoadInfo(JNIEnv *env, jobject library_info_obj,
+                   uintptr_t load_address, size_t load_size) {
+    env->SetLongField(library_info_obj, load_address_id, load_address);
+    env->SetLongField(library_info_obj, load_size_id, load_size);
+  }
 
-        void SetRelroInfo(JNIEnv* env,
-                          jobject library_info_obj,
-                          uintptr_t relro_start,
-                          size_t relro_size,
-                          int relro_fd) {
-            env->SetLongField(library_info_obj, relro_start_id, relro_start);
-            env->SetLongField(library_info_obj, relro_size_id, relro_size);
-            env->SetIntField(library_info_obj, relro_fd_id, relro_fd);
-        }
+  void SetRelroInfo(JNIEnv *env, jobject library_info_obj,
+                    uintptr_t relro_start, size_t relro_size, int relro_fd) {
+    env->SetLongField(library_info_obj, relro_start_id, relro_start);
+    env->SetLongField(library_info_obj, relro_size_id, relro_size);
+    env->SetIntField(library_info_obj, relro_fd_id, relro_fd);
+  }
 
-        bool GetLoadInfo(JNIEnv* env,
-                         jobject library_info_obj,
-                         uintptr_t* load_address,
-                         size_t* load_size) {
-            if (load_address) {
-                jlong java_address = env->GetLongField(library_info_obj, load_address_id);
-                if (!IsValidAddress(java_address))
-                    return false;
-                *load_address = static_cast<uintptr_t>(java_address);
-            }
-            if (load_size) {
-                *load_size = static_cast<uintptr_t>(
-                        env->GetLongField(library_info_obj, load_size_id));
-            }
-            return true;
-        }
+  bool GetLoadInfo(JNIEnv *env, jobject library_info_obj,
+                   uintptr_t *load_address, size_t *load_size) {
+    if (load_address) {
+      jlong java_address = env->GetLongField(library_info_obj, load_address_id);
+      if (!IsValidAddress(java_address)) return false;
+      *load_address = static_cast<uintptr_t>(java_address);
+    }
+    if (load_size) {
+      *load_size = static_cast<uintptr_t>(
+          env->GetLongField(library_info_obj, load_size_id));
+    }
+    return true;
+  }
 
-        void GetRelroInfo(JNIEnv* env,
-                          jobject library_info_obj,
-                          uintptr_t* relro_start,
-                          size_t* relro_size,
-                          int* relro_fd) {
-            if (relro_start) {
-                *relro_start = static_cast<uintptr_t>(
-                        env->GetLongField(library_info_obj, relro_start_id));
-            }
+  void GetRelroInfo(JNIEnv *env, jobject library_info_obj,
+                    uintptr_t *relro_start, size_t *relro_size, int *relro_fd) {
+    if (relro_start) {
+      *relro_start = static_cast<uintptr_t>(
+          env->GetLongField(library_info_obj, relro_start_id));
+    }
 
-            if (relro_size) {
-                *relro_size = static_cast<size_t>(
-                        env->GetLongField(library_info_obj, relro_size_id));
-            }
+    if (relro_size) {
+      *relro_size = static_cast<size_t>(
+          env->GetLongField(library_info_obj, relro_size_id));
+    }
 
-            if (relro_fd) {
-                *relro_fd = env->GetIntField(library_info_obj, relro_fd_id);
-            }
-        }
-    };
+    if (relro_fd) {
+      *relro_fd = env->GetIntField(library_info_obj, relro_fd_id);
+    }
+  }
+};
 
 // Used to find out whether RELRO sharing is often rejected due to mismatch of
 // the contents.
@@ -235,20 +219,20 @@ namespace chromium_android_linker {
 // numeric values should never be reused. Must be kept in sync with the enum
 // in enums.xml. A java @IntDef is generated from this.
 // GENERATED_JAVA_ENUM_PACKAGE: org.chromium.base.library_loader
-    enum class RelroSharingStatus {
-        NOT_ATTEMPTED = 0,
-        SHARED = 1,
-        NOT_IDENTICAL = 2,
-        EXTERNAL_RELRO_FD_NOT_PROVIDED = 3,
-        EXTERNAL_RELRO_NOT_FOUND = 4,
-        NO_SHMEM_FUNCTIONS = 5,
-        REMAP_FAILED = 6,
-        CORRUPTED_IN_JAVA = 7,
-        EXTERNAL_LOAD_ADDRESS_RESET = 8,
-        COUNT = 9,
-    };
+enum class RelroSharingStatus {
+  NOT_ATTEMPTED = 0,
+  SHARED = 1,
+  NOT_IDENTICAL = 2,
+  EXTERNAL_RELRO_FD_NOT_PROVIDED = 3,
+  EXTERNAL_RELRO_NOT_FOUND = 4,
+  NO_SHMEM_FUNCTIONS = 5,
+  REMAP_FAILED = 6,
+  CORRUPTED_IN_JAVA = 7,
+  EXTERNAL_LOAD_ADDRESS_RESET = 8,
+  COUNT = 9,
+};
 
-    struct SharedMemoryFunctions;
+struct SharedMemoryFunctions;
 
 // Holds address ranges of the loaded native library, its RELRO region, along
 // with the RELRO FD identifying the shared memory region. Carries the same
@@ -259,129 +243,133 @@ namespace chromium_android_linker {
 // (as a result of 'spawning' the RELRO region as shared memory.
 //
 // *Not* threadsafe.
-    class NativeLibInfo {
-    public:
-        // Constructs an empty instance. The |java_object| indicates the handle to
-        // import and export member fields.
-        //
-        // Having |env| as |nullptr| disables export to java for the lifetime of the
-        // instance. This is useful as a scratch info that is gradually populated for
-        // comparison with another NativeLibInfo, and then discarded.
-        NativeLibInfo(JNIEnv* env, jobject java_object);
+class NativeLibInfo {
+ public:
+  // Constructs an empty instance. The |java_object| indicates the handle to
+  // import and export member fields.
+  //
+  // Having |env| as |nullptr| disables export to java for the lifetime of the
+  // instance. This is useful as a scratch info that is gradually populated for
+  // comparison with another NativeLibInfo, and then discarded.
+  NativeLibInfo(JNIEnv *env, jobject java_object);
 
-        // Copies the java-side object state to this native instance. Returns false
-        // iff an imported value is invalid.
-        bool CopyFromJavaObject();
+  // Copies the java-side object state to this native instance. Returns false
+  // iff an imported value is invalid.
+  bool CopyFromJavaObject();
 
-        void set_load_address(uintptr_t a) { load_address_ = a; }
+  void set_load_address(uintptr_t a) { load_address_ = a; }
 
-        uintptr_t load_address() const { return load_address_; }
+  uintptr_t load_address() const { return load_address_; }
 
-        // Loads the native library using android_dlopen_ext and invokes JNI_OnLoad().
-        //
-        // On a successful load exports the address range of the library to the
-        // Java-side LibInfo.
-        //
-        // Iff |spawn_relro_region| is true, also finds the RELRO region in the
-        // library (PT_GNU_RELRO), converts it to be backed by a shared memory region
-        // (here referred as "RELRO FD") and exports the RELRO information to Java
-        // (the address range and the RELRO FD).
-        //
-        // When spawned, the shared memory region is exported only after sealing as
-        // read-only and without writable memory mappings. This allows any process to
-        // provide RELRO FD before it starts processing arbitrary input. For example,
-        // an App Zygote can create a RELRO FD in a sufficiently trustworthy way to
-        // make the Browser/Privileged processes share the region with it.
-        bool LoadLibrary(const String& library_path, bool spawn_relro_region);
+  // Loads the native library using android_dlopen_ext and invokes JNI_OnLoad().
+  //
+  // On a successful load exports the address range of the library to the
+  // Java-side LibInfo.
+  //
+  // Iff |spawn_relro_region| is true, also finds the RELRO region in the
+  // library (PT_GNU_RELRO), converts it to be backed by a shared memory region
+  // (here referred as "RELRO FD") and exports the RELRO information to Java
+  // (the address range and the RELRO FD).
+  //
+  // When spawned, the shared memory region is exported only after sealing as
+  // read-only and without writable memory mappings. This allows any process to
+  // provide RELRO FD before it starts processing arbitrary input. For example,
+  // an App Zygote can create a RELRO FD in a sufficiently trustworthy way to
+  // make the Browser/Privileged processes share the region with it.
+  bool LoadLibrary(const String &library_path, bool spawn_relro_region);
 
-        // Finds the RELRO region in the native library identified by
-        // |this->load_address()| and replaces it with the shared memory region
-        // identified by |other_lib_info|.
-        //
-        // The external NativeLibInfo can arrive from a different process.
-        //
-        // Note on security: The RELRO region is treated as *trusted*, no untrusted
-        // user/website/network input can be processed in an isolated process before
-        // it sends the RELRO FD. This is because there is no way to check whether the
-        // process has a writable mapping of the region remaining.
-        bool CompareRelroAndReplaceItBy(const NativeLibInfo& other_lib_info);
+  // Finds the RELRO region in the native library identified by
+  // |this->load_address()| and replaces it with the shared memory region
+  // identified by |other_lib_info|.
+  //
+  // The external NativeLibInfo can arrive from a different process.
+  //
+  // Note on security: The RELRO region is treated as *trusted*, no untrusted
+  // user/website/network input can be processed in an isolated process before
+  // it sends the RELRO FD. This is because there is no way to check whether the
+  // process has a writable mapping of the region remaining.
+  bool CompareRelroAndReplaceItBy(const NativeLibInfo &other_lib_info);
 
-        void set_relro_info_for_testing(uintptr_t start, size_t size) {
-            relro_start_ = start;
-            relro_size_ = size;
-        }
+  void set_relro_info_for_testing(uintptr_t start, size_t size) {
+    relro_start_ = start;
+    relro_size_ = size;
+  }
 
-        // Creates a shared RELRO region as it normally would during LoadLibrary()
-        // with |spawn_relro_region=true|. Exposed here because it is difficult to
-        // unittest LoadLibrary() directly.
-        bool CreateSharedRelroFdForTesting();
+  // Creates a shared RELRO region as it normally would during LoadLibrary()
+  // with |spawn_relro_region=true|. Exposed here because it is difficult to
+  // unittest LoadLibrary() directly.
+  bool CreateSharedRelroFdForTesting();
 
-        void set_relro_fd_for_testing(int fd) { relro_fd_ = fd; }
-        int get_relro_fd_for_testing() const { return relro_fd_; }
-        size_t get_relro_start_for_testing() const { return relro_start_; }
-        size_t get_load_size_for_testing() const { return load_size_; }
+  void set_relro_fd_for_testing(int fd) { relro_fd_ = fd; }
 
-        static bool SharedMemoryFunctionsSupportedForTesting();
+  int get_relro_fd_for_testing() const { return relro_fd_; }
 
-        bool FindRelroAndLibraryRangesInElfForTesting() {
-            return FindRelroAndLibraryRangesInElf();
-        }
+  size_t get_relro_start_for_testing() const { return relro_start_; }
 
-    private:
-        NativeLibInfo() = delete;
+  size_t get_load_size_for_testing() const { return load_size_; }
 
-        // Not copyable or movable.
-        NativeLibInfo(const NativeLibInfo&) = delete;
-        NativeLibInfo& operator=(const NativeLibInfo&) = delete;
+  static bool SharedMemoryFunctionsSupportedForTesting();
 
-        // Exports the address range of the library described by |this| to the
-        // Java-side LibInfo.
-        void ExportLoadInfoToJava() const;
+  bool FindRelroAndLibraryRangesInElfForTesting() {
+    return FindRelroAndLibraryRangesInElf();
+  }
 
-        // Exports the address range of the RELRO region and RELRO FD described by
-        // |this| to the Java-side LibInfo.
-        void ExportRelroInfoToJava() const;
+ private:
+  NativeLibInfo() = delete;
 
-        void CloseRelroFd();
+  // Not copyable or movable.
+  NativeLibInfo(const NativeLibInfo &) = delete;
 
-        // Determines the minimal address ranges for the union of all the loadable
-        // (and RELRO) segments by parsing ELF starting at |load_address()|. May fail
-        // or return incorrect results for some creative ELF libraries.
-        bool FindRelroAndLibraryRangesInElf();
+  NativeLibInfo &operator=(const NativeLibInfo &) = delete;
 
-        // Loads and initializes the load address ranges: |load_address_|,
-        // |load_size_|. Assumes that the memory range is reserved (in Linker.java).
-        bool LoadWithDlopenExt(const String& path, void** handle);
+  // Exports the address range of the library described by |this| to the
+  // Java-side LibInfo.
+  void ExportLoadInfoToJava() const;
 
-        // Initializes |relro_fd_| with a newly created read-only shared memory region
-        // sized as the library's RELRO and with identical data.
-        bool CreateSharedRelroFd(const SharedMemoryFunctions& functions);
+  // Exports the address range of the RELRO region and RELRO FD described by
+  // |this| to the Java-side LibInfo.
+  void ExportRelroInfoToJava() const;
 
-        // Assuming that RELRO-related information is populated, memory-maps the RELRO
-        // FD on top of the library's RELRO.
-        bool ReplaceRelroWithSharedOne(const SharedMemoryFunctions& functions) const;
+  void CloseRelroFd();
 
-        // Returns true iff the RELRO address and size, along with the contents are
-        // equal among the two.
-        bool RelroIsIdentical(const NativeLibInfo& external_lib_info,
-                              const SharedMemoryFunctions& functions) const;
+  // Determines the minimal address ranges for the union of all the loadable
+  // (and RELRO) segments by parsing ELF starting at |load_address()|. May fail
+  // or return incorrect results for some creative ELF libraries.
+  bool FindRelroAndLibraryRangesInElf();
 
-        static constexpr int kInvalidFd = -1;
-        uintptr_t load_address_ = 0;
-        size_t load_size_ = 0;
-        uintptr_t relro_start_ = 0;
-        size_t relro_size_ = 0;
-        int relro_fd_ = kInvalidFd;
-        JNIEnv* const env_;
-        const jobject java_object_;
-    };
+  // Loads and initializes the load address ranges: |load_address_|,
+  // |load_size_|. Assumes that the memory range is reserved (in Linker.java).
+  bool LoadWithDlopenExt(const String &path, void **handle);
+
+  // Initializes |relro_fd_| with a newly created read-only shared memory region
+  // sized as the library's RELRO and with identical data.
+  bool CreateSharedRelroFd(const SharedMemoryFunctions &functions);
+
+  // Assuming that RELRO-related information is populated, memory-maps the RELRO
+  // FD on top of the library's RELRO.
+  bool ReplaceRelroWithSharedOne(const SharedMemoryFunctions &functions) const;
+
+  // Returns true iff the RELRO address and size, along with the contents are
+  // equal among the two.
+  bool RelroIsIdentical(const NativeLibInfo &external_lib_info,
+                        const SharedMemoryFunctions &functions) const;
+
+  static constexpr int kInvalidFd = -1;
+  uintptr_t load_address_ = 0;
+  size_t load_size_ = 0;
+  uintptr_t relro_start_ = 0;
+  size_t relro_size_ = 0;
+  int relro_fd_ = kInvalidFd;
+  JNIEnv *const env_;
+  const jobject java_object_;
+};
 
 // JNI_OnLoad() initialization hook for the linker.
 // Sets up JNI and other initializations for native linker code.
 // |vm| is the Java VM handle passed to JNI_OnLoad().
 // |env| is the current JNI environment handle.
 // On success, returns true.
-    bool LinkerJNIInit(JavaVM* vm, JNIEnv* env);
+bool LinkerJNIInit(JavaVM *vm, JNIEnv *env);
 
 }  // namespace chromium_android_linker
 

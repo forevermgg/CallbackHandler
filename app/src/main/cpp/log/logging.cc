@@ -2,14 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include "logging.h"
+
+#include <android/log.h>
+
 #include <algorithm>
 #include <cstring>
 #include <iostream>
+
 #include "log_settings.h"
-#include "logging.h"
-
-
-#include <android/log.h>
 
 namespace fml {
 
@@ -40,9 +41,7 @@ const char* StripPath(const char* path) {
 }
 }  // namespace
 
-LogMessage::LogMessage(LogSeverity severity,
-                       const char* file,
-                       int line,
+LogMessage::LogMessage(LogSeverity severity, const char* file, int line,
                        const char* condition)
     : severity_(severity), file_(file), line_(line) {
   stream_ << "[";
@@ -63,17 +62,11 @@ thread_local std::ostringstream* LogMessage::capture_next_log_stream_ = nullptr;
 
 namespace testing {
 
-LogCapture::LogCapture() {
-  fml::LogMessage::CaptureNextLog(&stream_);
-}
+LogCapture::LogCapture() { fml::LogMessage::CaptureNextLog(&stream_); }
 
-LogCapture::~LogCapture() {
-  fml::LogMessage::CaptureNextLog(nullptr);
-}
+LogCapture::~LogCapture() { fml::LogMessage::CaptureNextLog(nullptr); }
 
-std::string LogCapture::str() const {
-  return stream_.str();
-}
+std::string LogCapture::str() const { return stream_.str(); }
 
 }  // namespace testing
 
@@ -112,16 +105,12 @@ LogMessage::~LogMessage() {
   }
 }
 
-int GetVlogVerbosity() {
-  return std::max(-1, LOG_INFO - GetMinLogLevel());
-}
+int GetVlogVerbosity() { return std::max(-1, LOG_INFO - GetMinLogLevel()); }
 
 bool ShouldCreateLogMessage(LogSeverity severity) {
   return severity >= GetMinLogLevel();
 }
 
-void KillProcess() {
-  abort();
-}
+void KillProcess() { abort(); }
 
 }  // namespace fml

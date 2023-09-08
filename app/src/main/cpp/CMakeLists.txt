@@ -39,8 +39,8 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         load_library.cpp
         thread_local.h
         thread_local.cc
-        jni_util.h
-        jni_util.cc
+        jni_android.h
+        jni_android.cc
         linker_jni.h
         linker_jni.cc
         log/log_level.h
@@ -51,6 +51,12 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         log/logging.cc
         memory/mutex.h
         memory/mutex_pthread.cc
+        jni_weak_ref.h
+        jni_weak_ref.cc
+        scoped_java_ref.h
+        scoped_java_ref.cc
+        string_conversion.h
+        string_conversion.cc
         native-lib.cpp)
 
 add_library("chromium_android_linker" SHARED

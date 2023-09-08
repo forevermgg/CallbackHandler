@@ -6,6 +6,7 @@ class LibCheckerApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        JNIUtils.setClassLoader(this.classLoader)
         app = this
     }
 

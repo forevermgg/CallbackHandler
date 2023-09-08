@@ -10,6 +10,7 @@
 #include <cstring>
 #include <iostream>
 #include <limits>
+
 #include "logging.h"
 
 namespace fml {
@@ -34,9 +35,7 @@ void SetLogSettings(const LogSettings& settings) {
 #endif
 }
 
-LogSettings GetLogSettings() {
-  return state::g_log_settings;
-}
+LogSettings GetLogSettings() { return state::g_log_settings; }
 
 int GetMinLogLevel() {
   return std::min(state::g_log_settings.min_log_level, LOG_FATAL);
@@ -47,8 +46,6 @@ ScopedSetLogSettings::ScopedSetLogSettings(const LogSettings& settings) {
   SetLogSettings(settings);
 }
 
-ScopedSetLogSettings::~ScopedSetLogSettings() {
-  SetLogSettings(old_settings_);
-}
+ScopedSetLogSettings::~ScopedSetLogSettings() { SetLogSettings(old_settings_); }
 
 }  // namespace fml

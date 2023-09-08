@@ -7,7 +7,7 @@
 
 #include "VirtualMachineEnv.h"
 #include "debug.h"
-#include "jni_util.h"
+#include "jni_android.h"
 #include "log/logging.h"
 #include "memory/mutex.h"
 
@@ -17,7 +17,7 @@ static bool sHardwareBufferSupported = true;
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_mgg_callbackhandler_MainActivity_stringFromJNI(JNIEnv* env,
                                                         jobject /* this */) {
-  if (!SetJavaVM(env)) {
+  if (!fml::jni::SetJavaVM(env)) {
     FML_LOG(ERROR) << "env error";
   }
   std::string hello = "Hello from C++";
@@ -39,11 +39,11 @@ Java_com_mgg_callbackhandler_MainActivity_stringFromJNI(JNIEnv* env,
     }
   }
   auto test_env = VirtualMachineEnv::get().getEnvironment();
-  test_env = AttachCurrentThread();
+  test_env = fml::jni::AttachCurrentThread();
   if (!test_env) {
     FML_LOG(ERROR) << "env error";
   }
-  test_env = GetJNIEnv();
+  test_env = fml::jni::GetJNIEnv();
   if (!test_env) {
     FML_LOG(ERROR) << "env error";
   }

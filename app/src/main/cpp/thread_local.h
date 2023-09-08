@@ -6,7 +6,7 @@
 #define THREAD_LOCAL static
 
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
-  TypeName(const TypeName&) = delete;          \
+  TypeName(const TypeName&) = delete;      \
   TypeName& operator=(const TypeName&) = delete
 
 class ThreadLocalPointer {

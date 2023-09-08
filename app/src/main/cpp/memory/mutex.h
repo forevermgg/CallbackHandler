@@ -1,10 +1,10 @@
-#ifndef FOREVER_FIREBASE_INTERNAL_MUTEX_H_
-#define FOREVER_FIREBASE_INTERNAL_MUTEX_H_
+#ifndef FOREVER_MUTEX_H_
+#define FOREVER_MUTEX_H_
 
 #include <pthread.h>
 #include <memory>
 
-namespace Forever {
+namespace FOREVER {
 
 /// @brief A simple synchronization lock. Only one thread at a time can Acquire.
 class Mutex {
@@ -59,6 +59,6 @@ class MutexLock {
 
   Mutex* mutex_;
 };
-}  // namespace Forever
+}  // namespace FOREVER
 
-#endif  // FOREVER_FIREBASE_INTERNAL_MUTEX_H_
+#endif  // FOREVER_MUTEX_H_

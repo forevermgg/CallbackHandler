@@ -1,7 +1,3 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
 #include "jni_android.h"
 
 #include <android/log.h>
@@ -9,18 +5,18 @@
 
 #include <string>
 
-#include "../../log/logging.h"
+#include "logging.h"
 #include "string_conversion.h"
 #include "thread_local.h"
 
-namespace fml {
-namespace jni {
+namespace FOREVER {
+namespace JNI {
 
 static JavaVM *g_jvm = nullptr;
 // 替换为 std::mutex
 static std::mutex g_mutex;
 
-#define ASSERT_NO_EXCEPTION() FML_CHECK(env->ExceptionCheck() == JNI_FALSE);
+#define ASSERT_NO_EXCEPTION() FOREVER_CHECK(env->ExceptionCheck() == JNI_FALSE);
 
 struct JNIDetach {
   ~JNIDetach() { DetachFromVM(); }
@@ -32,13 +28,13 @@ THREAD_LOCAL ThreadLocalUniquePtr<JNIDetach> tls_jni_detach;
 void InitJavaVM(JavaVM *vm) {
   std::lock_guard<std::mutex> lock(g_mutex);
   // FML_DCHECK(g_jvm == nullptr);
-  FML_LOG(ERROR) << "InitJavaVM";
+  FOREVER_LOG(ERROR) << "InitJavaVM";
   g_jvm = vm;
 }
 
 JNIEnv *AttachCurrentThread() {
   std::lock_guard<std::mutex> lock(g_mutex);
-  FML_DCHECK(g_jvm != nullptr)
+  FOREVER_DCHECK(g_jvm != nullptr)
       << "Trying to attach to current thread without calling InitJavaVM first.";
 
   JNIEnv *env = nullptr;
@@ -59,23 +55,23 @@ JNIEnv *AttachCurrentThread() {
     args.name = thread_name;
   }
   [[maybe_unused]] jint ret = g_jvm->AttachCurrentThread(&env, &args);
-  FML_DCHECK(JNI_OK == ret);
+  FOREVER_DCHECK(JNI_OK == ret);
 
-  FML_DCHECK(tls_jni_detach.get() == nullptr);
+  FOREVER_DCHECK(tls_jni_detach.get() == nullptr);
   tls_jni_detach.reset(new JNIDetach());
 
   return env;
 }
 
 JNIEnv *AttachCurrentThreadWithName(const std::string &thread_name) {
-  FML_DCHECK(g_jvm != nullptr);
+  FOREVER_DCHECK(g_jvm != nullptr);
   JavaVMAttachArgs args;
   args.version = JNI_VERSION_1_2;
   args.name = const_cast<char *>(thread_name.c_str());
   args.group = nullptr;
   JNIEnv *env = nullptr;
   jint ret = g_jvm->AttachCurrentThread(&env, &args);
-  FML_DCHECK(JNI_OK == ret);
+  FOREVER_DCHECK(JNI_OK == ret);
   return env;
 }
 
@@ -105,7 +101,7 @@ class JvmThread {
       case JNI_OK:
         break;
       case JNI_EDETACHED:
-        FML_LOG(ERROR) << "GetEnv: not attached";
+        FOREVER_LOG(ERROR) << "GetEnv: not attached";
         if (jvm_->AttachCurrentThread(
 #ifdef __ANDROID__
                 &jni_env_,
@@ -113,16 +109,16 @@ class JvmThread {
                 reinterpret_cast<void **>(&jni_env_),
 #endif  // __ANDROID__
                 nullptr) != 0) {
-          FML_LOG(ERROR) << "Failed to attach to java thread.";
+          FOREVER_LOG(ERROR) << "Failed to attach to java thread.";
           break;
         }
         attached_ = true;
         break;
       case JNI_EVERSION:
-        FML_LOG(ERROR) << "GetEnv: jni version not supported.";
+        FOREVER_LOG(ERROR) << "GetEnv: jni version not supported.";
         break;
       default:
-        FML_LOG(ERROR) << "GetEnv: unknown status.";
+        FOREVER_LOG(ERROR) << "GetEnv: unknown status.";
         break;
     }
   }
@@ -150,7 +146,7 @@ static pthread_once_t key_once = PTHREAD_ONCE_INIT;
 static void ThreadExitCallback(void *key_value) {
   JvmThread *jvm_thread = reinterpret_cast<JvmThread *>(key_value);
   // Detach the thread when thread exits.
-  FML_LOG(ERROR) << "Exiting thread. Detach thread.";
+  FOREVER_LOG(ERROR) << "Exiting thread. Detach thread.";
   delete jvm_thread;
 }
 
@@ -171,7 +167,7 @@ bool SetJavaVM(JNIEnv *env) {
   std::lock_guard<std::mutex> lock(g_mutex);
   if (!g_jvm) {
     if (env->GetJavaVM(&g_jvm) != JNI_OK) {
-      FML_LOG(ERROR) << "Can not get the Java VM instance!";
+      FOREVER_LOG(ERROR) << "Can not get the Java VM instance!";
       g_jvm = nullptr;
       return false;
     }
@@ -245,7 +241,7 @@ std::vector<std::string> StringListToVector(JNIEnv *env, jobject list) {
   }
 
   ScopedJavaLocalRef<jclass> list_clazz(env, env->FindClass("java/util/List"));
-  FML_DCHECK(!list_clazz.is_null());
+  FOREVER_DCHECK(!list_clazz.is_null());
 
   jmethodID list_get =
       env->GetMethodID(list_clazz.obj(), "get", "(I)Ljava/lang/Object;");
@@ -269,10 +265,10 @@ std::vector<std::string> StringListToVector(JNIEnv *env, jobject list) {
 
 ScopedJavaLocalRef<jobjectArray> VectorToStringArray(
     JNIEnv *env, const std::vector<std::string> &vector) {
-  FML_DCHECK(env);
+  FOREVER_DCHECK(env);
   ScopedJavaLocalRef<jclass> string_clazz(env,
                                           env->FindClass("java/lang/String"));
-  FML_DCHECK(!string_clazz.is_null());
+  FOREVER_DCHECK(!string_clazz.is_null());
   jobjectArray java_array =
       env->NewObjectArray(vector.size(), string_clazz.obj(), NULL);
   ASSERT_NO_EXCEPTION();
@@ -285,10 +281,10 @@ ScopedJavaLocalRef<jobjectArray> VectorToStringArray(
 
 ScopedJavaLocalRef<jobjectArray> VectorToBufferArray(
     JNIEnv *env, const std::vector<std::vector<uint8_t>> &vector) {
-  FML_DCHECK(env);
+  FOREVER_DCHECK(env);
   ScopedJavaLocalRef<jclass> byte_buffer_clazz(
       env, env->FindClass("java/nio/ByteBuffer"));
-  FML_DCHECK(!byte_buffer_clazz.is_null());
+  FOREVER_DCHECK(!byte_buffer_clazz.is_null());
   jobjectArray java_array =
       env->NewObjectArray(vector.size(), byte_buffer_clazz.obj(), NULL);
   ASSERT_NO_EXCEPTION();
@@ -322,7 +318,7 @@ bool CheckException(JNIEnv *env) {
 
   jthrowable exception = env->ExceptionOccurred();
   env->ExceptionClear();
-  FML_LOG(ERROR) << fml::jni::GetJavaExceptionInfo(env, exception);
+  FOREVER_LOG(ERROR) << FOREVER::JNI::GetJavaExceptionInfo(env, exception);
   env->DeleteLocalRef(exception);
   return false;
 }
@@ -369,5 +365,5 @@ std::string GetJavaExceptionInfo(JNIEnv *env, jthrowable java_throwable) {
   return JavaStringToString(env, exception_string.obj());
 }
 
-}  // namespace jni
-}  // namespace fml
+}  // namespace JNI
+}  // namespace FOREVER

@@ -1,15 +1,11 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-#ifndef FLUTTER_FML_LOG_SETTINGS_H_
-#define FLUTTER_FML_LOG_SETTINGS_H_
+#ifndef FOREVER_LOG_SETTINGS_H_
+#define FOREVER_LOG_SETTINGS_H_
 
 #include <string>
 
 #include "log_level.h"
 
-namespace fml {
+namespace FOREVER {
 
 // Settings which control the behavior of FML logging.
 struct LogSettings {
@@ -44,6 +40,6 @@ class ScopedSetLogSettings {
   LogSettings old_settings_;
 };
 
-}  // namespace fml
+}  // namespace FOREVER
 
-#endif  // FLUTTER_FML_LOG_SETTINGS_H_
+#endif  // FOREVER_LOG_SETTINGS_H_

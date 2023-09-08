@@ -1,11 +1,7 @@
-// Copyright 2022 The Chromium Authors
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+#ifndef FOREVER_TYPES_ALWAYS_FALSE_H_
+#define FOREVER_TYPES_ALWAYS_FALSE_H_
 
-#ifndef BASE_TYPES_ALWAYS_FALSE_H_
-#define BASE_TYPES_ALWAYS_FALSE_H_
-
-namespace base {
+namespace FOREVER {
 
 // A helper that can be used with a static_assert() that must always fail (e.g.
 // for an undesirable template instantiation). Such a static_assert() cannot
@@ -43,6 +39,6 @@ template <typename... Args>
 inline constexpr bool AlwaysFalse =
     internal::AlwaysFalseHelper<Args...>::kValue;
 
-}  // namespace base
+}  // namespace FOREVER
 
-#endif  // BASE_TYPES_ALWAYS_FALSE_H_
+#endif  // FOREVER_TYPES_ALWAYS_FALSE_H_

@@ -1,9 +1,5 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-#ifndef FLUTTER_FML_PLATFORM_ANDROID_SCOPED_JAVA_REF_H_
-#define FLUTTER_FML_PLATFORM_ANDROID_SCOPED_JAVA_REF_H_
+#ifndef FOREVER_PLATFORM_ANDROID_SCOPED_JAVA_REF_H_
+#define FOREVER_PLATFORM_ANDROID_SCOPED_JAVA_REF_H_
 
 #include <jni.h>
 
@@ -11,8 +7,8 @@
 
 #include "macros.h"
 
-namespace fml {
-namespace jni {
+namespace FOREVER {
+namespace JNI {
 
 // Creates a new local reference frame, in which at least a given number of
 // local references can be created. Note that local references already created
@@ -234,7 +230,7 @@ class ScopedJavaGlobalRef : public JavaRef<T> {
   T Release() { return static_cast<T>(this->ReleaseInternal()); }
 };
 
-}  // namespace jni
-}  // namespace fml
+}  // namespace JNI
+}  // namespace FOREVER
 
-#endif  // FLUTTER_FML_PLATFORM_ANDROID_SCOPED_JAVA_REF_H_
+#endif  // FOREVER_PLATFORM_ANDROID_SCOPED_JAVA_REF_H_

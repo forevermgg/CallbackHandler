@@ -24,12 +24,13 @@
 // and ideally a leaf dependency. Singletons get problematic when they attempt
 // to do too much in their destructor or have circular dependencies.
 
-#ifndef BASE_MEMORY_SINGLETON_H_
-#define BASE_MEMORY_SINGLETON_H_
+#ifndef FOREVER_MEMORY_SINGLETON_H_
+#define FOREVER_MEMORY_SINGLETON_H_
 
 #include <atomic>
+#include <memory>
 
-namespace base {
+namespace FOREVER {
 
 // Default traits for Singleton<Type>. Calls operator new and operator delete on
 // the object. Registers automatic deletion at process exit.
@@ -251,6 +252,6 @@ class Singleton {
 
 template <typename Type, typename Traits, typename DifferentiatingType>
 std::atomic<uintptr_t> Singleton<Type, Traits, DifferentiatingType>::instance_ = 0;
-}  // namespace base
+}  // namespace FOREVER
 
-#endif  // BASE_MEMORY_SINGLETON_H_
+#endif  // FOREVER_MEMORY_SINGLETON_H_

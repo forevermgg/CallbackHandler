@@ -1,11 +1,7 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+#ifndef FOREVER_LOG_LEVEL_H_
+#define FOREVER_LOG_LEVEL_H_
 
-#ifndef FLUTTER_FML_LOG_LEVEL_H_
-#define FLUTTER_FML_LOG_LEVEL_H_
-
-namespace fml {
+namespace FOREVER {
 
 typedef int LogSeverity;
 
@@ -27,6 +23,6 @@ const LogSeverity LOG_DFATAL = LOG_ERROR;
 const LogSeverity LOG_DFATAL = LOG_FATAL;
 #endif
 
-}  // namespace fml
+}  // namespace FOREVER
 
-#endif  // FLUTTER_FML_LOG_LEVEL_H_
+#endif  // FOREVER_LOG_LEVEL_H_

@@ -1,9 +1,5 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-#ifndef FLUTTER_FML_PLATFORM_ANDROID_JNI_UTIL_H_
-#define FLUTTER_FML_PLATFORM_ANDROID_JNI_UTIL_H_
+#ifndef FOREVER_PLATFORM_ANDROID_JNI_UTIL_H_
+#define FOREVER_PLATFORM_ANDROID_JNI_UTIL_H_
 
 #include <jni.h>
 
@@ -11,8 +7,8 @@
 
 #include "scoped_java_ref.h"
 
-namespace fml {
-namespace jni {
+namespace FOREVER {
+namespace JNI {
 
 // Returns a JNI environment for the current thread.
 // Attaches the thread to JNI if needed.
@@ -76,7 +72,7 @@ bool ClearException(JNIEnv* env, bool silent = false);
 bool CheckException(JNIEnv* env);
 std::string GetJavaExceptionInfo(JNIEnv* env, jthrowable java_throwable);
 
-}  // namespace jni
-}  // namespace fml
+}  // namespace JNI
+}  // namespace FOREVER
 
-#endif  // FLUTTER_FML_PLATFORM_ANDROID_JNI_UTIL_H_
+#endif  // FOREVER_PLATFORM_ANDROID_JNI_UTIL_H_

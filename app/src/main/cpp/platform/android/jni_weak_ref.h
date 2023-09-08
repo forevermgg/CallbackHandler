@@ -1,16 +1,12 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-#ifndef FLUTTER_FML_PLATFORM_ANDROID_JNI_WEAK_REF_H_
-#define FLUTTER_FML_PLATFORM_ANDROID_JNI_WEAK_REF_H_
+#ifndef FOREVER_PLATFORM_ANDROID_JNI_WEAK_REF_H_
+#define FOREVER_PLATFORM_ANDROID_JNI_WEAK_REF_H_
 
 #include <jni.h>
 
 #include "scoped_java_ref.h"
 
-namespace fml {
-namespace jni {
+namespace FOREVER {
+namespace JNI {
 
 // Manages WeakGlobalRef lifecycle.
 // This class is not thread-safe w.r.t. get() and reset(). Multiple threads may
@@ -44,7 +40,7 @@ class JavaObjectWeakGlobalRef {
 // ScopedJavaLocalRef.
 ScopedJavaLocalRef<jobject> GetRealObject(JNIEnv *env, jweak obj);
 
-}  // namespace jni
-}  // namespace fml
+}  // namespace JNI
+}  // namespace FOREVER
 
-#endif  // FLUTTER_FML_PLATFORM_ANDROID_JNI_WEAK_REF_H_
+#endif  // FOREVER_PLATFORM_ANDROID_JNI_WEAK_REF_H_

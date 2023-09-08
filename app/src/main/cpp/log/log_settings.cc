@@ -13,24 +13,24 @@
 
 #include "logging.h"
 
-namespace fml {
-namespace state {
+namespace FOREVER {
+namespace STATE {
 
 // Defined in log_settings_state.cc.
 extern LogSettings g_log_settings;
 
-}  // namespace state
+}  // namespace STATE
 
 void SetLogSettings(const LogSettings& settings) {
   // Validate the new settings as we set them.
-  state::g_log_settings.min_log_level =
+  STATE::g_log_settings.min_log_level =
       std::min(LOG_FATAL, settings.min_log_level);
 }
 
-LogSettings GetLogSettings() { return state::g_log_settings; }
+LogSettings GetLogSettings() { return STATE::g_log_settings; }
 
 int GetMinLogLevel() {
-  return std::min(state::g_log_settings.min_log_level, LOG_FATAL);
+  return std::min(STATE::g_log_settings.min_log_level, LOG_FATAL);
 }
 
 ScopedSetLogSettings::ScopedSetLogSettings(const LogSettings& settings) {
@@ -40,4 +40,4 @@ ScopedSetLogSettings::ScopedSetLogSettings(const LogSettings& settings) {
 
 ScopedSetLogSettings::~ScopedSetLogSettings() { SetLogSettings(old_settings_); }
 
-}  // namespace fml
+}  // namespace FOREVER

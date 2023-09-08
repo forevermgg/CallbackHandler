@@ -1,14 +1,10 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
 #include "jni_weak_ref.h"
 
 #include "jni_android.h"
-#include "../../log/logging.h"
+#include "logging.h"
 
-namespace fml {
-namespace jni {
+namespace FOREVER {
+namespace JNI {
 
 JavaObjectWeakGlobalRef::JavaObjectWeakGlobalRef() : obj_(NULL) {}
 
@@ -20,7 +16,7 @@ JavaObjectWeakGlobalRef::JavaObjectWeakGlobalRef(
 
 JavaObjectWeakGlobalRef::JavaObjectWeakGlobalRef(JNIEnv *env, jobject obj)
     : obj_(env->NewWeakGlobalRef(obj)) {
-  FML_DCHECK(obj_);
+  FOREVER_DCHECK(obj_);
 }
 
 JavaObjectWeakGlobalRef::~JavaObjectWeakGlobalRef() { reset(); }
@@ -45,7 +41,7 @@ ScopedJavaLocalRef<jobject> GetRealObject(JNIEnv *env, jweak obj) {
   if (obj) {
     real = env->NewLocalRef(obj);
     if (!real) {
-      FML_DLOG(ERROR) << "The real object has been deleted!";
+      FOREVER_DLOG(ERROR) << "The real object has been deleted!";
     }
   }
   return ScopedJavaLocalRef<jobject>(env, real);
@@ -64,5 +60,5 @@ void JavaObjectWeakGlobalRef::Assign(const JavaObjectWeakGlobalRef &other) {
   obj_ = other.obj_ ? env->NewWeakGlobalRef(other.obj_) : NULL;
 }
 
-}  // namespace jni
-}  // namespace fml
+}  // namespace JNI
+}  // namespace FOREVER

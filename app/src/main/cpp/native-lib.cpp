@@ -17,8 +17,8 @@ static bool sHardwareBufferSupported = true;
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_mgg_callbackhandler_MainActivity_stringFromJNI(JNIEnv* env,
                                                         jobject /* this */) {
-  if (!fml::jni::SetJavaVM(env)) {
-    FML_LOG(ERROR) << "env error";
+  if (!FOREVER::JNI::SetJavaVM(env)) {
+    FOREVER_LOG(ERROR) << "env error";
   }
   std::string hello = "Hello from C++";
   // This function is not available before NDK 15 or before Android 8.
@@ -39,13 +39,13 @@ Java_com_mgg_callbackhandler_MainActivity_stringFromJNI(JNIEnv* env,
     }
   }
   auto test_env = VirtualMachineEnv::get().getEnvironment();
-  test_env = fml::jni::AttachCurrentThread();
+  test_env = FOREVER::JNI::AttachCurrentThread();
   if (!test_env) {
-    FML_LOG(ERROR) << "env error";
+    FOREVER_LOG(ERROR) << "env error";
   }
-  test_env = fml::jni::GetJNIEnv();
+  test_env = FOREVER::JNI::GetJNIEnv();
   if (!test_env) {
-    FML_LOG(ERROR) << "env error";
+    FOREVER_LOG(ERROR) << "env error";
   }
   return test_env->NewStringUTF(hello.c_str());
 }

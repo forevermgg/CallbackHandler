@@ -1,7 +1,3 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
 #include "logging.h"
 
 #include <android/log.h>
@@ -12,7 +8,7 @@
 
 #include "log_settings.h"
 
-namespace fml {
+namespace FOREVER {
 
 namespace {
 const char* const kLogSeverityNames[LOG_NUM_SEVERITIES] = {"INFO", "WARNING",
@@ -60,16 +56,6 @@ LogMessage::LogMessage(LogSeverity severity, const char* file, int line,
 // static
 thread_local std::ostringstream* LogMessage::capture_next_log_stream_ = nullptr;
 
-namespace testing {
-
-LogCapture::LogCapture() { fml::LogMessage::CaptureNextLog(&stream_); }
-
-LogCapture::~LogCapture() { fml::LogMessage::CaptureNextLog(nullptr); }
-
-std::string LogCapture::str() const { return stream_.str(); }
-
-}  // namespace testing
-
 // static
 void LogMessage::CaptureNextLog(std::ostringstream* stream) {
   LogMessage::capture_next_log_stream_ = stream;
@@ -113,4 +99,4 @@ bool ShouldCreateLogMessage(LogSeverity severity) {
 
 void KillProcess() { abort(); }
 
-}  // namespace fml
+}  // namespace FOREVER

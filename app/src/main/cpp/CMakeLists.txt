@@ -11,6 +11,11 @@ cmake_minimum_required(VERSION 3.22.1)
 # build script scope).
 project("callbackhandler")
 
+include_directories(common)
+include_directories(log)
+include_directories(platform/android)
+include_directories(memory)
+
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
 # You can define multiple libraries, and CMake builds them for you.
@@ -26,7 +31,7 @@ project("callbackhandler")
 # used in the AndroidManifest.xml file.
 add_library(${CMAKE_PROJECT_NAME} SHARED
         # List C/C++ source files with relative paths to this CMakeLists.txt.
-        platform/android/macros.h
+        common/macros.h
         debug.h
         debug.cpp
         compiler.h
@@ -51,6 +56,7 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         log/logging.cc
         memory/mutex.h
         memory/mutex_pthread.cc
+        memory/singleton.h
         platform/android/jni_weak_ref.h
         platform/android/jni_weak_ref.cc
         platform/android/scoped_java_ref.h

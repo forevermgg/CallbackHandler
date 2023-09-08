@@ -97,7 +97,7 @@ LogMessage::~LogMessage() {
         priority = ANDROID_LOG_FATAL;
         break;
     }
-    __android_log_write(priority, "flutter", stream_.str().c_str());
+    __android_log_write(priority, "Forever", stream_.str().c_str());
   }
 
   if (severity_ >= LOG_FATAL) {

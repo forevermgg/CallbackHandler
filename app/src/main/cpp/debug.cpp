@@ -23,7 +23,4 @@
 void panic(const char *func, const char *file, int line,
            const char *assertion) noexcept {
   std::abort();
-  ;        // set a breakpoint here
-  return;  // this line is needed to be able to move the cursor here in the
-           // debugger
 }

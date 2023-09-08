@@ -25,14 +25,6 @@ void SetLogSettings(const LogSettings& settings) {
   // Validate the new settings as we set them.
   state::g_log_settings.min_log_level =
       std::min(LOG_FATAL, settings.min_log_level);
-#if defined(OS_FUCHSIA)
-  // Syslog should accept all logs, since filtering by severity is done by fml.
-  fx_logger_t* logger = fx_log_get_logger();
-  if (logger) {
-    fx_logger_set_min_severity(logger,
-                               std::numeric_limits<fx_log_severity_t>::min());
-  }
-#endif
 }
 
 LogSettings GetLogSettings() { return state::g_log_settings; }

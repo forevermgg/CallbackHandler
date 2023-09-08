@@ -9,7 +9,7 @@
 
 #include <string>
 
-#include "log/logging.h"
+#include "../../log/logging.h"
 #include "string_conversion.h"
 #include "thread_local.h"
 

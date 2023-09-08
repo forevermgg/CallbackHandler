@@ -7,7 +7,7 @@
 
 #include "VirtualMachineEnv.h"
 #include "debug.h"
-#include "jni_android.h"
+#include "platform/android/jni_android.h"
 #include "log/logging.h"
 #include "memory/mutex.h"
 

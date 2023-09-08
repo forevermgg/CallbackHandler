@@ -5,7 +5,7 @@
 #include "jni_weak_ref.h"
 
 #include "jni_android.h"
-#include "log/logging.h"
+#include "../../log/logging.h"
 
 namespace fml {
 namespace jni {

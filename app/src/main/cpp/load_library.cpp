@@ -17,7 +17,7 @@
 #include <jni.h>
 
 #include "VirtualMachineEnv.h"
-#include "jni_android.h"
+#include "platform/android/jni_android.h"
 #include "log/log_level.h"
 #include "log/log_settings.h"
 #include "log/logging.h"

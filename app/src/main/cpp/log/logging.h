@@ -7,7 +7,7 @@
 
 #include <sstream>
 
-#include "../macros.h"
+#include "../platform/android/macros.h"
 #include "log_level.h"
 
 namespace fml {

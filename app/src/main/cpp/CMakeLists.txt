@@ -31,6 +31,7 @@ include_directories(memory)
 # used in the AndroidManifest.xml file.
 add_library(${CMAKE_PROJECT_NAME} SHARED
         # List C/C++ source files with relative paths to this CMakeLists.txt.
+        AutoBitmap.cc
         common/macros.h
         debug.h
         debug.cpp
@@ -58,12 +59,16 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         memory/mutex.h
         memory/mutex_pthread.cc
         memory/singleton.h
+        memory/Condition.h
+        memory/Invocable.h
         platform/android/jni_weak_ref.h
         platform/android/jni_weak_ref.cc
         platform/android/scoped_java_ref.h
         platform/android/scoped_java_ref.cc
         platform/android/string_conversion.h
         platform/android/string_conversion.cc
+        thread/ThreadUtils.h
+        thread/ThreadUtils.cpp
         common/NioUtils.h
         common/NioUtils.cpp
         Test.cpp

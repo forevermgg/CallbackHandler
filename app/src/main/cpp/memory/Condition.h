@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-#ifndef TNT_UTILS_GENERIC_CONDITION_H
-#define TNT_UTILS_GENERIC_CONDITION_H
+#ifndef FOREVER_CONDITION_H
+#define FOREVER_CONDITION_H
 
 #include <condition_variable>
 
-namespace utils {
+namespace FOREVER {
 
 class Condition : public std::condition_variable {
-public:
-    using std::condition_variable::condition_variable;
+ public:
+  using std::condition_variable::condition_variable;
 
-    inline void notify_n(size_t n) noexcept {
-        if (n == 1) {
-            notify_one();
-        } else if (n > 1) {
-            notify_all();
-        }
+  inline void notify_n(size_t n) noexcept {
+    if (n == 1) {
+      notify_one();
+    } else if (n > 1) {
+      notify_all();
     }
+  }
 };
 
-} // namespace utils
+}  // namespace FOREVER
 
-#endif // TNT_UTILS_GENERIC_CONDITION_H
+#endif  // FOREVER_CONDITION_H

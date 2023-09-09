@@ -7,7 +7,8 @@
 #include "string_conversion.h"
 #include "logging.h"
 
-extern "C" JNIEXPORT void JNICALL Java_com_mgg_callbackhandler_Test_nConsumer(
+extern "C" JNIEXPORT void JNICALL
+Java_com_mgg_callbackhandler_Test_nConsumer(
     JNIEnv* env, jclass clazz, jlong nativeTest, jobject handler,
     jobject internalCallback) {
   // jniState will be initialized the first time this method is called
@@ -65,4 +66,14 @@ Java_com_mgg_callbackhandler_Test_nProducer(JNIEnv *env, jclass clazz, jlong nat
     FOREVER_LOG(ERROR) << "Producer";
     test->Producer();
   }
+}
+extern "C" JNIEXPORT void JNICALL
+Java_com_mgg_callbackhandler_Test_nSetCompletedCallback(JNIEnv *env, jclass clazz,
+                                                        jlong nativeTest, jobject handler,
+                                                        jobject runnable) {
+  Test* test = (Test*) nativeTest;
+  auto* callback = JniCallback::make(env, handler, runnable);
+  test->setCompletedCallback(nullptr, [callback](Test* swapChain) {
+      JniCallback::postToJavaAndDestroy(callback);
+  });
 }

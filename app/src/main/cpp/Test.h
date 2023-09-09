@@ -1,8 +1,11 @@
 #ifndef CALLBACK_HANDLER_TEST_H
 #define CALLBACK_HANDLER_TEST_H
 #include <string>
+#include <vector>
 
 #include "CallbackHandler.h"
+#include "Handle.h"
+#include "Invocable.h"
 #include "logging.h"
 
 class Test {
@@ -41,6 +44,12 @@ class Test {
     PickingQueryResultCallback const callback;
     PickingQueryResult result;
   };
+
+  struct {
+    CallbackHandler* handler = nullptr;
+    CallbackHandler::Callback callback = {};
+    void* user = nullptr;
+  } completed;
 
   template <typename T, void (T::*method)(PickingQueryResult const&)>
   void Consumer(T* instance, CallbackHandler* handler = nullptr) noexcept {
@@ -92,7 +101,45 @@ class Test {
     return mActivePickingQueriesList != nullptr;
   }
 
+  struct CallbackData {
+    CallbackData(CallbackData const&) = delete;
+    CallbackData(CallbackData&&) = delete;
+    CallbackData& operator=(CallbackData const&) = delete;
+    CallbackData& operator=(CallbackData&&) = delete;
+    void* storage[8] = {};
+    static CallbackData* obtain(Test* allocator);
+    static void release(CallbackData* data);
+
+   protected:
+    CallbackData() = default;
+  };
+
+  template <typename T>
+  void scheduleCallback(CallbackHandler* handler, T&& functor) {
+    CallbackData* data = CallbackData::obtain(this);
+    static_assert(sizeof(T) <= sizeof(data->storage), "functor too large");
+    new (data->storage) T(std::forward<T>(functor));
+    scheduleCallback(
+        handler, data, (CallbackHandler::Callback)[](void* data) {
+          CallbackData* details = static_cast<CallbackData*>(data);
+          void* user = details->storage;
+          T& functor = *static_cast<T*>(user);
+          functor();
+          functor.~T();
+          CallbackData::release(details);
+        });
+  }
+
+  void scheduleCallback(CallbackHandler* handler, void* user,
+                        CallbackHandler::Callback callback);
+
+  void setCompletedCallback(CallbackHandler* handler,
+                            FOREVER::Invocable<void(Test*)>&& callback);
+
   FPickingQuery* mActivePickingQueriesList = nullptr;
+  std::vector<std::pair<void*, CallbackHandler::Callback>> mCallbacks;
+  std::vector<std::tuple<CallbackHandler*, CallbackHandler::Callback, void*>>
+      mServiceThreadCallbackQueue;
 };
 
 #endif  // CALLBACK_HANDLER_TEST_H

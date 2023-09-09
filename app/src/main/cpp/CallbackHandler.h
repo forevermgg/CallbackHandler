@@ -30,6 +30,7 @@
  * and/or wait for all callbacks to be processed.
  *
  */
+#pragma once
 class CallbackHandler {
  public:
   using Callback = void (*)(void* user);

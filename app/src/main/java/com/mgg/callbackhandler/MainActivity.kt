@@ -4,6 +4,8 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -32,6 +34,11 @@ class MainActivity : AppCompatActivity() {
         testLoader()
 
         testAppList()
+        val test = Test()
+        test.consumer(Handler(Looper.getMainLooper())) {
+            Timber.e("Test JavaCallBack")
+        }
+        test.producer()
     }
 
     private fun generateLCItemFromPackageInfo(

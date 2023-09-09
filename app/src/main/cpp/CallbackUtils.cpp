@@ -1,3 +1,4 @@
+#include <utility>
 #include "CallbackUtils.h"
 
 #include "VirtualMachineEnv.h"
@@ -62,3 +63,27 @@ void JniCallback::postToJavaAndDestroy(JniCallback* callback) {
                      callback->mCallback);
   delete callback;
 }
+// -----------------------------------------------------------------------------------------------
+
+JniBufferCallback* JniBufferCallback::make(JNIEnv* env, jobject handler,
+                                           jobject callback,
+                                           AutoBuffer&& buffer) {
+  return new JniBufferCallback(env, handler, callback, std::move(buffer));
+}
+
+JniBufferCallback::JniBufferCallback(JNIEnv* env, jobject handler,
+                                     jobject callback, AutoBuffer&& buffer)
+    : JniCallback(env, handler, callback), mBuffer(std::move(buffer)) {}
+
+JniBufferCallback::~JniBufferCallback() = default;
+
+void JniBufferCallback::postToJavaAndDestroy(void*, size_t, void* user) {
+  JniBufferCallback* callback = (JniBufferCallback*)user;
+  JNIEnv* env = VirtualMachineEnv::get().getEnvironment();
+  callback->mBuffer.attachToJniThread(env);
+  releaseCallbackJni(env, callback->mCallbackUtils, callback->mHandler,
+                     callback->mCallback);
+  delete callback;
+}
+
+// -----------------------------------------------------------------------------------------------

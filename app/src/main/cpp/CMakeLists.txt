@@ -34,6 +34,7 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         common/macros.h
         debug.h
         debug.cpp
+        downcast.h
         compiler.h
         VirtualMachineEnv.h
         VirtualMachineEnv.cpp
@@ -63,6 +64,11 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         platform/android/scoped_java_ref.cc
         platform/android/string_conversion.h
         platform/android/string_conversion.cc
+        NioUtils.h
+        NioUtils.cpp
+        Test.cpp
+        Test.h
+        test_jni.cc
         native-lib.cpp)
 
 add_library("chromium_android_linker" SHARED

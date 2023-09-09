@@ -3,6 +3,7 @@
 #include <jni.h>
 
 #include "CallbackHandler.h"
+#include "NioUtils.h"
 
 struct CallbackJni {
 #ifdef __ANDROID__
@@ -44,4 +45,19 @@ struct JniCallback : private CallbackHandler {
   jobject mHandler{};
   jobject mCallback{};
   CallbackJni mCallbackUtils{};
+};
+
+struct JniBufferCallback : public JniCallback {
+  // create a JniBufferCallback
+  static JniBufferCallback* make(JNIEnv* env, jobject handler, jobject callback,
+                                 AutoBuffer&& buffer);
+
+  // execute the callback on the java thread and destroy ourselves
+  static void postToJavaAndDestroy(void*, size_t, void* user);
+
+ private:
+  JniBufferCallback(JNIEnv* env, jobject handler, jobject callback,
+                    AutoBuffer&& buffer);
+  virtual ~JniBufferCallback();
+  AutoBuffer mBuffer;
 };

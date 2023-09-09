@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "CallbackHandler.h"
-#include "Handle.h"
 #include "Invocable.h"
 #include "logging.h"
 

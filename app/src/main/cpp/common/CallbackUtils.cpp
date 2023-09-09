@@ -1,5 +1,6 @@
-#include <utility>
 #include "CallbackUtils.h"
+
+#include <utility>
 
 #include "../VirtualMachineEnv.h"
 
@@ -87,3 +88,22 @@ void JniBufferCallback::postToJavaAndDestroy(void*, size_t, void* user) {
 }
 
 // -----------------------------------------------------------------------------------------------
+
+JniImageCallback* JniImageCallback::make(JNIEnv* env, jobject handler,
+                                         jobject callback, long image) {
+  return new JniImageCallback(env, handler, callback, image);
+}
+
+JniImageCallback::JniImageCallback(JNIEnv* env, jobject handler,
+                                   jobject callback, long image)
+    : JniCallback(env, handler, callback), mImage(image) {}
+
+JniImageCallback::~JniImageCallback() = default;
+
+void JniImageCallback::postToJavaAndDestroy(void*, void* user) {
+  JniImageCallback* callback = (JniImageCallback*)user;
+  JNIEnv* env = VirtualMachineEnv::get().getEnvironment();
+  releaseCallbackJni(env, callback->mCallbackUtils, callback->mHandler,
+                     callback->mCallback);
+  delete callback;
+}

@@ -61,3 +61,17 @@ struct JniBufferCallback : public JniCallback {
   virtual ~JniBufferCallback();
   AutoBuffer mBuffer;
 };
+
+struct JniImageCallback : public JniCallback {
+  // create a JniImageCallback
+  static JniImageCallback* make(JNIEnv* env, jobject handler, jobject runnable,
+                                long image);
+
+  // execute the callback on the java thread and destroy ourselves
+  static void postToJavaAndDestroy(void*, void* user);
+
+ private:
+  JniImageCallback(JNIEnv* env, jobject handler, jobject runnable, long image);
+  virtual ~JniImageCallback();
+  long mImage;
+};

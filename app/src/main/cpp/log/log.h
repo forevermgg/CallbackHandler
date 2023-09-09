@@ -22,8 +22,6 @@ enum LogLevel {
   kLogLevelAssert,
 };
 
-const LogLevel kDefaultLogLevel = kLogLevelInfo;
-
 /// @brief Sets the logging verbosity.
 /// All log messages at or above the specific log level.
 ///

@@ -14,6 +14,8 @@ namespace FOREVER {
 static void DefaultLogCallback(LogLevel log_level, const char* message,
                                void* /*callback_data*/);
 
+const LogLevel kDefaultLogLevel = kLogLevelInfo;
+
 LogLevel g_log_level = kDefaultLogLevel;
 LogCallback g_log_callback = DefaultLogCallback;
 void* g_log_callback_data = nullptr;

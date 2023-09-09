@@ -1,7 +1,5 @@
 package com.mgg.callbackhandler
 
-import android.content.pm.ApplicationInfo
-import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
@@ -32,8 +30,6 @@ class MainActivity : AppCompatActivity() {
         test()
 
         testLoader()
-
-        testAppList()
         val test = Test()
         test.consumer(Handler(Looper.getMainLooper())) {
             Timber.e("Test JavaCallBack")
@@ -42,22 +38,6 @@ class MainActivity : AppCompatActivity() {
         test.setCompletedCallback(Handler(Looper.getMainLooper())) {
             Timber.e("Test JavaSetCompletedCallback")
         }
-    }
-
-    private fun generateLCItemFromPackageInfo(
-        pi: PackageInfo
-    ): LCItem {
-        return LCItem(
-            pi.packageName,
-            pi.getAppName() ?: "null",
-            pi.versionName ?: "null",
-            pi.getVersionCode(),
-            pi.firstInstallTime,
-            pi.lastUpdateTime,
-            (pi.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM) == ApplicationInfo.FLAG_SYSTEM,
-            pi.applicationInfo.targetSdkVersion.toShort(),
-            // variant
-        )
     }
 
     private fun test() {
@@ -159,27 +139,6 @@ class MainActivity : AppCompatActivity() {
         Log.e(
             "ReadElf",
             "native library libcallbackhandler.so ${File(ainfo.nativeLibraryDir + File.separator + "libcallbackhandler.so").exists()}"
-        )
-    }
-
-    private fun testAppList() {
-        val appList = LocalAppDataSource.getApplicationList().toMutableList()
-
-        val lcItems = mutableListOf<LCItem>()
-        var progressCount = 0
-        for (info in appList) {
-            try {
-                lcItems.add(generateLCItemFromPackageInfo(info))
-                progressCount++
-                // updateInitProgress(progressCount * 100 / appList.size)
-            } catch (e: Throwable) {
-                Timber.e(e, "initItems: ${info.packageName}")
-                continue
-            }
-        }
-        Log.e(
-            "LocalAppDataSource",
-            "ApplicationList ${lcItems.size}"
         )
     }
 

@@ -39,6 +39,9 @@ class MainActivity : AppCompatActivity() {
             Timber.e("Test JavaCallBack")
         }
         test.producer()
+        test.setCompletedCallback(Handler(Looper.getMainLooper())) {
+            Timber.e("Test JavaSetCompletedCallback")
+        }
     }
 
     private fun generateLCItemFromPackageInfo(

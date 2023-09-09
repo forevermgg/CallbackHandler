@@ -87,6 +87,10 @@ public class Test {
         nConsumer(getNativeObject(), handler, internalCallback);
     }
 
+    public void setCompletedCallback(@NonNull Object handler, @NonNull Runnable callback) {
+        nSetCompletedCallback(getNativeObject(), handler, callback);
+    }
+
     public void producer() {
         nProducer(getNativeObject());
     }
@@ -94,6 +98,8 @@ public class Test {
     private static native void nConsumer(long nativeTest, Object handler, InternalOnPickCallback internalCallback);
 
     private static native void nProducer(long nativeTest);
+
+    private static native void nSetCompletedCallback(long nativeSwapChain, Object handler, Runnable callback);
 
     private static native long nCreateTest();
 

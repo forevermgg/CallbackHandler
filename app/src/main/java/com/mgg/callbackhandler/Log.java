@@ -1,100 +1,155 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+/*
+ * Copyright 2016 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.mgg.callbackhandler;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
+/**
+ * Replacement for android.util.Log that redirects log messages to the
+ * C++ log methods in log_android.cc.
+ */
 public class Log {
-  private static int logLevel = android.util.Log.DEBUG;
+  private static final String TAG = "firebase_log";
 
-  public static int ASSERT = android.util.Log.ASSERT;
-  public static int DEBUG = android.util.Log.DEBUG;
-  public static int ERROR = android.util.Log.ERROR;
-  public static int INFO = android.util.Log.INFO;
-  public static int VERBOSE = android.util.Log.VERBOSE;
-  public static int WARN = android.util.Log.WARN;
+  // Global log instance.
+  private static Log sLogInstance = null;
+  // Lock which is used to arbitrate access to the global logger.
+  private static final Object sLock = new Object();
+
+  // Flag which is set to false if we detect the nativeLog method has been unregistered.
+  private boolean nativeLogAvailable = true;
 
   /**
-   * Sets a log cutoff such that a log level of lower priority than {@code logLevel} is filtered
-   * out.
-   *
-   * <p>See {@link android.util.Log} for log level constants.
+   * See android.util.Log.d().
    */
-  public static void setLogLevel(int logLevel) {
-    Log.logLevel = logLevel;
+  public static int d(String tag, String msg) {
+    safeNativeLog(android.util.Log.DEBUG, tag, msg);
+    return 0;
   }
 
-  public static void println(@NonNull int level, @NonNull String tag, @NonNull String message) {
-    if (logLevel <= level) {
-      android.util.Log.println(level, tag, message);
+  /**
+   * See android.util.Log.v().
+   */
+  public static int v(String tag, String msg) {
+    safeNativeLog(android.util.Log.VERBOSE, tag, msg);
+    return 0;
+  }
+
+  /**
+   * See android.util.Log.i().
+   */
+  public static int i(String tag, String msg) {
+    safeNativeLog(android.util.Log.INFO, tag, msg);
+    return 0;
+  }
+
+  /**
+   * See android.util.Log.w().
+   */
+  public static int w(String tag, String msg) {
+    safeNativeLog(android.util.Log.WARN, tag, msg);
+    return 0;
+  }
+
+  /**
+   * See android.util.Log.e().
+   */
+  public static int e(String tag, String msg) {
+    safeNativeLog(android.util.Log.ERROR, tag, msg);
+    return 0;
+  }
+
+  /**
+   * See android.util.Log.wtf().
+   */
+  public static int wtf(String tag, String msg) {
+    safeNativeLog(android.util.Log.ERROR, tag, msg);
+    return 0;
+  }
+
+  /**
+   * Get / create the Log singleton.
+   */
+  public static Log getInstance() {
+    synchronized (sLock) {
+      if (sLogInstance == null) {
+        android.util.Log.d(TAG, "Creating Log instance.");
+        sLogInstance = new Log();
+        sLogInstance.safeNativeLogInternal(
+            android.util.Log.DEBUG, TAG, sLogInstance.getClass().toString());
+      }
+    }
+    return sLogInstance;
+  }
+
+  /**
+   * Dereference the log singleton.
+   */
+  public static void shutdown() {
+    synchronized (sLock) {
+      sLogInstance = null;
     }
   }
 
-  public static void v(@NonNull String tag, @NonNull String message) {
-    if (logLevel <= android.util.Log.VERBOSE) {
-      android.util.Log.v(tag, message);
+  /**
+   * Static wrapper around safeNativeLogInternal which gets / creates an instance of the log
+   * class then calls safeNativeLogInternal to ideally log via nativeLog or fall back to
+   * android.util.Log.
+   */
+  private static void safeNativeLog(int level, String tag, String msg) {
+    synchronized (sLock) {
+      getInstance().safeNativeLogInternal(level, tag, msg);
     }
   }
 
-  public static void v(@NonNull String tag, @NonNull String message, @NonNull Throwable tr) {
-    if (logLevel <= android.util.Log.VERBOSE) {
-      android.util.Log.v(tag, message, tr);
+  /**
+   * Wrapper for nativeLog that will redirect log messages to android.util.Log if a native method
+   * isn't registered for the Log.nativeLog method.
+   */
+  private void safeNativeLogInternal(int level, String tag, String msg) {
+    if (nativeLogAvailable) {
+      try {
+        nativeLog(level, tag, msg);
+      } catch (UnsatisfiedLinkError e) {
+        nativeLogAvailable = false;
+        android.util.Log.w(TAG,
+            String.format(
+                "nativeLog not registered, falling back to android.util.Log (%s)", e.toString()));
+      }
+    }
+    if (!nativeLogAvailable) {
+      switch (level) {
+        case android.util.Log.VERBOSE:
+          android.util.Log.v(tag, msg);
+          break;
+        case android.util.Log.INFO:
+          android.util.Log.i(tag, msg);
+          break;
+        case android.util.Log.WARN:
+          android.util.Log.w(tag, msg);
+          break;
+        case android.util.Log.ERROR:
+          android.util.Log.e(tag, msg);
+          break;
+        case android.util.Log.DEBUG:
+        default:
+          android.util.Log.d(tag, msg);
+          break;
+      }
     }
   }
 
-  public static void i(@NonNull String tag, @NonNull String message) {
-    if (logLevel <= android.util.Log.INFO) {
-      android.util.Log.i(tag, message);
-    }
-  }
-
-  public static void i(@NonNull String tag, @NonNull String message, @NonNull Throwable tr) {
-    if (logLevel <= android.util.Log.INFO) {
-      android.util.Log.i(tag, message, tr);
-    }
-  }
-
-  public static void d(@NonNull String tag, @NonNull String message) {
-    if (logLevel <= android.util.Log.DEBUG) {
-      android.util.Log.d(tag, message);
-    }
-  }
-
-  public static void d(@NonNull String tag, @NonNull String message, @NonNull Throwable tr) {
-    if (logLevel <= android.util.Log.DEBUG) {
-      android.util.Log.d(tag, message, tr);
-    }
-  }
-
-  public static void w(@NonNull String tag, @NonNull String message) {
-    android.util.Log.w(tag, message);
-  }
-
-  public static void w(@NonNull String tag, @NonNull String message, @NonNull Throwable tr) {
-    android.util.Log.w(tag, message, tr);
-  }
-
-  public static void e(@NonNull String tag, @NonNull String message) {
-    android.util.Log.e(tag, message);
-  }
-
-  public static void e(@NonNull String tag, @NonNull String message, @NonNull Throwable tr) {
-    android.util.Log.e(tag, message, tr);
-  }
-
-  public static void wtf(@NonNull String tag, @NonNull String message) {
-    android.util.Log.wtf(tag, message);
-  }
-
-  public static void wtf(@NonNull String tag, @NonNull String message, @NonNull Throwable tr) {
-    android.util.Log.wtf(tag, message, tr);
-  }
-
-  @NonNull
-  public static String getStackTraceString(@Nullable Throwable tr) {
-    return android.util.Log.getStackTraceString(tr);
-  }
+  private native void nativeLog(int level, String tag, String msg);
 }

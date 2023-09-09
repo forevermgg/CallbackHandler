@@ -1,7 +1,7 @@
 #include <utility>
 #include "CallbackUtils.h"
 
-#include "VirtualMachineEnv.h"
+#include "../VirtualMachineEnv.h"
 
 void acquireCallbackJni(JNIEnv* env, CallbackJni& callbackUtils) {
 #ifdef __ANDROID__

@@ -38,10 +38,10 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         compiler.h
         VirtualMachineEnv.h
         VirtualMachineEnv.cpp
-        CallbackHandler.h
-        CallbackHandler.cpp
-        CallbackUtils.h
-        CallbackUtils.cpp
+        common/CallbackHandler.h
+        common/CallbackHandler.cpp
+        common/CallbackUtils.h
+        common/CallbackUtils.cpp
         load_library.cpp
         platform/android/thread_local.h
         platform/android/thread_local.cc
@@ -64,8 +64,8 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         platform/android/scoped_java_ref.cc
         platform/android/string_conversion.h
         platform/android/string_conversion.cc
-        NioUtils.h
-        NioUtils.cpp
+        common/NioUtils.h
+        common/NioUtils.cpp
         Test.cpp
         Test.h
         test_jni.cc

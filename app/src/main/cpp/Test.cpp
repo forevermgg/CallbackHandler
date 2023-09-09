@@ -1,4 +1,5 @@
 #include "Test.h"
+
 #include "logging.h"
 
 Test::Test() = default;
@@ -16,7 +17,7 @@ Test::PickingQuery &Test::Consumer(CallbackHandler *handler,
 void Test::Producer() {
   while (mActivePickingQueriesList) {
     FOREVER_LOG(ERROR) << "while (mActivePickingQueriesList)";
-    FPickingQuery* const pQuery = mActivePickingQueriesList;
+    FPickingQuery *const pQuery = mActivePickingQueriesList;
     mActivePickingQueriesList = pQuery->next;
     pQuery->callback(pQuery->result, pQuery);
     FPickingQuery::put(pQuery);

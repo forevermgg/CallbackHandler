@@ -28,9 +28,7 @@ class Test {
         : PickingQuery{}, handler(handler), callback(callback) {
       FOREVER_LOG(ERROR) << "FPickingQuery()";
     }
-    ~FPickingQuery() {
-      FOREVER_LOG(ERROR) << "~FPickingQuery()";
-    }
+    ~FPickingQuery() { FOREVER_LOG(ERROR) << "~FPickingQuery()"; }
 
    public:
     static FPickingQuery* get(CallbackHandler* handler,
@@ -90,7 +88,9 @@ class Test {
   PickingQuery& Consumer(CallbackHandler* handler,
                          PickingQueryResultCallback callback);
 
-  bool hasPicking() const noexcept { return mActivePickingQueriesList != nullptr; }
+  bool hasPicking() const noexcept {
+    return mActivePickingQueriesList != nullptr;
+  }
 
   FPickingQuery* mActivePickingQueriesList = nullptr;
 };

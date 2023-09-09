@@ -91,6 +91,10 @@ public class Test {
         nSetCompletedCallback(getNativeObject(), handler, callback);
     }
 
+    public void setAcquiredImage(Object hwbuffer, Object handler, Runnable callback) {
+        nSetAcquiredImage(getNativeObject(), hwbuffer, handler, callback);
+    }
+
     public void producer() {
         nProducer(getNativeObject());
     }
@@ -100,6 +104,9 @@ public class Test {
     private static native void nProducer(long nativeTest);
 
     private static native void nSetCompletedCallback(long nativeSwapChain, Object handler, Runnable callback);
+
+    private static native void nSetAcquiredImage(long nativeStream,
+                                                 Object hwbuffer, Object handler, Runnable callback);
 
     private static native long nCreateTest();
 

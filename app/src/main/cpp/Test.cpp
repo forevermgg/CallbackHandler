@@ -72,3 +72,16 @@ void Test::setCompletedCallback(CallbackHandler *handler,
     scheduleCallback(handler, user, callback);
   }
 }
+
+// This is called from an async driver method so it's in the GL thread, but purge is called
+// on the user thread. This is typically called 0 or 1 times per frame.
+void Test::scheduleRelease(AcquiredImage const& image) noexcept {
+  /*scheduleCallback(image.handler, [image]() {
+      image.callback(image.image, image.userData);
+  });*/
+}
+
+void Test::setAcquiredImage(void* image, CallbackHandler* handler, Callback callback, void* userdata) {
+  AcquiredImage acquiredImage = {image, callback, userdata, handler};
+  scheduleRelease(acquiredImage);
+}

@@ -134,6 +134,16 @@ class Test {
 
   void setCompletedCallback(CallbackHandler* handler,
                             FOREVER::Invocable<void(Test*)>&& callback);
+  using StreamCallback = void(*)(void* image, void* user);
+  using Callback = StreamCallback;
+  struct AcquiredImage {
+    void* image = nullptr;
+    StreamCallback callback = nullptr;
+    void* userData = nullptr;
+    CallbackHandler* handler = nullptr;
+  };
+  void scheduleRelease(AcquiredImage const& image) noexcept;
+  void setAcquiredImage(void* image, CallbackHandler* handler, Callback callback, void* userdata);
 
   FPickingQuery* mActivePickingQueriesList = nullptr;
   std::vector<std::pair<void*, CallbackHandler::Callback>> mCallbacks;

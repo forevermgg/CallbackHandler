@@ -1,9 +1,9 @@
-#ifndef TNT_FILAMENT_DOWNCAST_H
-#define TNT_FILAMENT_DOWNCAST_H
+#ifndef TNT_FOREVER_DOWNCAST_H
+#define TNT_FOREVER_DOWNCAST_H
 
 /*
  * Generates functions to safely downcast a pointer Bar* to FBar*
- * FILAMENT_DOWNCAST() should be included in the header file
+ * FOREVER_DOWNCAST() should be included in the header file
  * declaring FBar, e.g.:
  *
  * #include <Bar.h>
@@ -11,11 +11,11 @@
  * class FBar : public Bar {
  * };
  *
- * FILAMENT_DOWNCAST(Bar)
+ * FOREVER_DOWNCAST(Bar)
  *
  */
 
-#define FILAMENT_DOWNCAST(CLASS)                                    \
+#define FOREVER_DOWNCAST(CLASS)                                    \
     inline F##CLASS& downcast(CLASS& that) noexcept {               \
         return static_cast<F##CLASS &>(that);                       \
     }                                                               \
@@ -29,4 +29,4 @@
         return static_cast<F##CLASS const *>(that);                 \
     }
 
-#endif // TNT_FILAMENT_DOWNCAST_H
+#endif // TNT_FOREVER_DOWNCAST_H

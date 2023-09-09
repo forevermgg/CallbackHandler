@@ -1,4 +1,5 @@
 #include "Test.h"
+#include "logging.h"
 
 Test::Test() = default;
 
@@ -7,13 +8,17 @@ Test::~Test() noexcept = default;
 Test::PickingQuery &Test::Consumer(CallbackHandler *handler,
                                    Test::PickingQueryResultCallback callback) {
   FPickingQuery *pQuery = FPickingQuery::get(handler, callback);
-  mActivePickingQuery = pQuery;
+  pQuery->next = mActivePickingQueriesList;
+  mActivePickingQueriesList = pQuery;
   return *pQuery;
 }
 
 void Test::Producer() {
-  if (mActivePickingQuery) {
-    mActivePickingQuery->callback(mActivePickingQuery->result,
-                                  mActivePickingQuery);
+  while (mActivePickingQueriesList) {
+    FOREVER_LOG(ERROR) << "while (mActivePickingQueriesList)";
+    FPickingQuery* const pQuery = mActivePickingQueriesList;
+    mActivePickingQueriesList = pQuery->next;
+    pQuery->callback(pQuery->result, pQuery);
+    FPickingQuery::put(pQuery);
   }
 }

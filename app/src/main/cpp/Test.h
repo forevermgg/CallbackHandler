@@ -3,7 +3,7 @@
 #include <string>
 
 #include "CallbackHandler.h"
-#include "downcast.h"
+#include "logging.h"
 
 class Test {
  public:
@@ -25,8 +25,12 @@ class Test {
    private:
     FPickingQuery(CallbackHandler* handler,
                   PickingQueryResultCallback callback) noexcept
-        : PickingQuery{}, handler(handler), callback(callback) {}
-    ~FPickingQuery() noexcept = default;
+        : PickingQuery{}, handler(handler), callback(callback) {
+      FOREVER_LOG(ERROR) << "FPickingQuery()";
+    }
+    ~FPickingQuery() {
+      FOREVER_LOG(ERROR) << "~FPickingQuery()";
+    }
 
    public:
     static FPickingQuery* get(CallbackHandler* handler,
@@ -34,6 +38,7 @@ class Test {
       return new FPickingQuery(handler, callback);
     }
     static void put(FPickingQuery* pQuery) noexcept { delete pQuery; }
+    mutable FPickingQuery* next = nullptr;
     CallbackHandler* const handler;
     PickingQueryResultCallback const callback;
     PickingQueryResult result;
@@ -85,7 +90,9 @@ class Test {
   PickingQuery& Consumer(CallbackHandler* handler,
                          PickingQueryResultCallback callback);
 
-  FPickingQuery* mActivePickingQuery = nullptr;
+  bool hasPicking() const noexcept { return mActivePickingQueriesList != nullptr; }
+
+  FPickingQuery* mActivePickingQueriesList = nullptr;
 };
 
 #endif  // CALLBACK_HANDLER_TEST_H

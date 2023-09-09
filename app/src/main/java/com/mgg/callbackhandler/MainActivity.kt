@@ -4,7 +4,6 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.mgg.callbackhandler.databinding.ActivityMainBinding
@@ -38,6 +37,7 @@ class MainActivity : AppCompatActivity() {
         test.setCompletedCallback(Handler(Looper.getMainLooper())) {
             Timber.e("Test JavaSetCompletedCallback")
         }
+        Log.e("FOREVER_TEST", "test")
     }
 
     private fun test() {

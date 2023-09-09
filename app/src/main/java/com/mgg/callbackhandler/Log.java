@@ -21,7 +21,7 @@ package com.mgg.callbackhandler;
  * C++ log methods in log_android.cc.
  */
 public class Log {
-  private static final String TAG = "firebase_log";
+  private static final String TAG = "forever_log";
 
   // Global log instance.
   private static Log sLogInstance = null;

@@ -56,6 +56,10 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         log/log_settings_state.cc
         log/logging.h
         log/logging.cc
+        log/log.h
+        log/log.cc
+        log/log_android.cc
+        log/log_android_callback.cc
         memory/mutex.h
         memory/mutex_pthread.cc
         memory/singleton.h

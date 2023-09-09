@@ -1,5 +1,5 @@
 #include "Test.h"
-
+#include "log.h"
 #include "logging.h"
 
 Test::Test() = default;

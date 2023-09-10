@@ -63,7 +63,8 @@ METHOD_LOOKUP_DEFINITION(throwable, "java/lang/Throwable", THROWABLE_METHODS)
 
 METHOD_LOOKUP_DECLARATION(app, FOREVER_APP_METHODS)
 METHOD_LOOKUP_DEFINITION(app,
-                         PROGUARD_KEEP_CLASS "com/mgg/callbackhandler/LibCheckerApp",
+                         PROGUARD_KEEP_CLASS
+                         "com/mgg/callbackhandler/LibCheckerApp",
                          FOREVER_APP_METHODS)
 
 METHOD_LOOKUP_DEFINITION(activity, "android/app/Activity", ACTIVITY_METHODS)
@@ -381,9 +382,34 @@ jint AttachCurrentThread(JavaVM* java_vm, JNIEnv** env) {
   return java_vm->AttachCurrentThread(env, nullptr);
 }
 
+// Find an Android SDK FirebaseApp instance by name.
+// Returns a local jobject reference if successful, nullptr otherwise.
+jobject GetPlatformAppByName(JNIEnv* jni_env) {
+  jobject platform_app;
+  platform_app = jni_env->CallStaticObjectMethod(
+      app::GetClass(), app::GetMethodId(app::kGetInstance));
+  if (jni_env->ExceptionCheck()) {
+    // Explicitly set `platform_app` to `NULL` if an exception was thrown
+    // because on KitKat (API 19) `CallStaticObjectMethod()` may return garbage
+    // instead of `NULL` if an exception was thrown, and callers of this
+    // function expect `NULL` to be returned if the app was not found.
+    platform_app = NULL;  // NOLINT
+  }
+  jni_env->ExceptionClear();
+  return platform_app;
+}
+
 // Release cached classes.
-void ReleaseClasses(JNIEnv* env) { throwable::ReleaseClass(env); }
-bool Initialize(JNIEnv* env) { return throwable::CacheMethodIds(env); }
+void ReleaseClasses(JNIEnv* env) {
+  throwable::ReleaseClass(env);
+  app::ReleaseClass(env);
+}
+
+bool Initialize(JNIEnv* env) {
+  throwable::CacheMethodIds(env);
+  app::CacheMethodIds(env);
+  return true;
+}
 }  // namespace UTIL
 // NOLINTNEXTLINE - allow namespace overridden
 }  // namespace FOREVER

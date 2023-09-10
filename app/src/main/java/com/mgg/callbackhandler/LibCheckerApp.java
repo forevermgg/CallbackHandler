@@ -2,6 +2,9 @@ package com.mgg.callbackhandler;
 
 import android.app.Application;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import timber.log.Timber;
 
 public class LibCheckerApp extends Application {
@@ -18,7 +21,11 @@ public class LibCheckerApp extends Application {
     public void onCreate() {
         super.onCreate();
         JNIUtils.setClassLoader(this.getClassLoader());
-        Timber.plant(Timber.asTree());
+        Timber.plant(new Timber.Tree() {
+            @Override
+            protected void log(int i, @Nullable String s, @NonNull String s1, @Nullable Throwable throwable) {
+            }
+        });
         instancesLibCheckerApp = this;
     }
 }

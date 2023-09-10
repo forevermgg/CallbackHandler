@@ -439,7 +439,7 @@ JNIEnv* GetThreadsafeJNIEnv(JavaVM* java_vm);
 // Users should use GetThreadsafeJNIEnv() instead to ensure they detach the JNI
 // environment from the thread when exiting.
 jint AttachCurrentThread(JavaVM* java_vm, JNIEnv** env);
-
+jobject GetPlatformAppByName(JNIEnv* jni_env);
 void ReleaseClasses(JNIEnv* env);
 bool Initialize(JNIEnv* env);
 }  // namespace UTIL

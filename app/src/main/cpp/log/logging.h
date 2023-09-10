@@ -50,35 +50,35 @@ bool ShouldCreateLogMessage(LogSeverity severity);
 }  // namespace FOREVER
 
 #define FOREVER_LOG_STREAM(severity) \
-  ::FOREVER::LogMessage(::FOREVER::LOG_##severity, __FILE__, __LINE__, nullptr).stream()
+  FOREVER::LogMessage(FOREVER::LOG_##severity, __FILE__, __LINE__, nullptr).stream()
 
 #define FOREVER_LAZY_STREAM(stream, condition) \
-  !(condition) ? (void)0 : ::FOREVER::LogMessageVoidify() & (stream)
+  !(condition) ? (void)0 : FOREVER::LogMessageVoidify() & (stream)
 
 #define FOREVER_EAT_STREAM_PARAMETERS(ignored) \
   true || (ignored)                        \
       ? (void)0                            \
-      : ::FOREVER::LogMessageVoidify() &       \
-            ::FOREVER::LogMessage(::FOREVER::LOG_FATAL, 0, 0, nullptr).stream()
+      : FOREVER::LogMessageVoidify() &       \
+            FOREVER::LogMessage(FOREVER::LOG_FATAL, 0, 0, nullptr).stream()
 
 #define FOREVER_LOG_IS_ON(severity) \
-  (::FOREVER::ShouldCreateLogMessage(::FOREVER::LOG_##severity))
+  (FOREVER::ShouldCreateLogMessage(FOREVER::LOG_##severity))
 
 #define FOREVER_LOG(severity) \
   FOREVER_LAZY_STREAM(FOREVER_LOG_STREAM(severity), FOREVER_LOG_IS_ON(severity))
 
 #define FOREVER_CHECK(condition)                                              \
   FOREVER_LAZY_STREAM(                                                        \
-      ::FOREVER::LogMessage(::FOREVER::LOG_FATAL, __FILE__, __LINE__, #condition) \
+      FOREVER::LogMessage(FOREVER::LOG_FATAL, __FILE__, __LINE__, #condition) \
           .stream(),                                                      \
       !(condition))
 
 #define FOREVER_VLOG_IS_ON(verbose_level) \
-  ((verbose_level) <= ::FOREVER::GetVlogVerbosity())
+  ((verbose_level) <= FOREVER::GetVlogVerbosity())
 
 // The VLOG macros log with negative verbosities.
 #define FOREVER_VLOG_STREAM(verbose_level) \
-  ::FOREVER::LogMessage(-verbose_level, __FILE__, __LINE__, nullptr).stream()
+  FOREVER::LogMessage(-verbose_level, __FILE__, __LINE__, nullptr).stream()
 
 #define FOREVER_VLOG(verbose_level) \
   FOREVER_LAZY_STREAM(FOREVER_VLOG_STREAM(verbose_level), FOREVER_VLOG_IS_ON(verbose_level))
@@ -94,7 +94,7 @@ bool ShouldCreateLogMessage(LogSeverity severity);
 #define FOREVER_UNREACHABLE()                          \
   {                                                \
     FOREVER_LOG(ERROR) << "Reached unreachable code."; \
-    ::FOREVER::KillProcess();                          \
+    FOREVER::KillProcess();                          \
   }
 
 #endif  // FOREVER_LOGGING_H_

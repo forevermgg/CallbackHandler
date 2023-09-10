@@ -6,10 +6,12 @@ namespace FOREVER {
 typedef int LogSeverity;
 
 // Default log levels. Negative values can be used for verbose log levels.
-constexpr LogSeverity LOG_INFO = 0;
-constexpr LogSeverity LOG_WARNING = 1;
-constexpr LogSeverity LOG_ERROR = 2;
-constexpr LogSeverity LOG_FATAL = 3;
+constexpr LogSeverity LOG_VERBOSE = 0;
+constexpr LogSeverity LOG_DEBUG = 1;
+constexpr LogSeverity LOG_INFO = 2;
+constexpr LogSeverity LOG_WARNING = 3;
+constexpr LogSeverity LOG_ERROR = 4;
+constexpr LogSeverity LOG_FATAL = 5;
 constexpr LogSeverity LOG_NUM_SEVERITIES = 4;
 
 // One of the Windows headers defines ERROR to 0. This makes the token

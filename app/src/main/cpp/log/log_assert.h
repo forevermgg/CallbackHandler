@@ -1,7 +1,8 @@
 #ifndef FOREVER_ASSERT_H_
 #define FOREVER_ASSERT_H_
-
+#include "logging.h"
 #include "log.h"
+#include "log_level.h"
 
 #define FOREVER_EXPAND_STRINGIFY_(X) #X
 #define FOREVER_EXPAND_STRINGIFY(X) FOREVER_EXPAND_STRINGIFY_(X)
@@ -22,12 +23,15 @@
 
 // Assert condition is true, if it's false log an assert with the specified
 // expression as a string.
-#define FOREVER_ASSERT_WITH_EXPRESSION(condition, expression)      \
+#define FOREVER_ASSERT_WITH_EXPRESSION(condition, expression)       \
   do {                                                              \
     if (!(condition)) {                                             \
-      FOREVER::LogAssert(                                          \
-          FOREVER_ASSERT_MESSAGE_PREFIX FOREVER_EXPAND_STRINGIFY( \
+      FOREVER::LOG::LogAssert(                                      \
+          FOREVER_ASSERT_MESSAGE_PREFIX FOREVER_EXPAND_STRINGIFY(   \
               expression));                                         \
+      FOREVER_LOG(FATAL) <<                                    \
+      FOREVER_ASSERT_MESSAGE_PREFIX FOREVER_EXPAND_STRINGIFY(       \
+              expression);                                          \
     }                                                               \
   } while (false)
 
@@ -89,13 +93,17 @@
 // Assert condition is true otherwise display the specified expression,
 // message and abort.
 #define FOREVER_ASSERT_MESSAGE_WITH_EXPRESSION(condition, expression, ...) \
-  do {                                                                      \
-    if (!(condition)) {                                                     \
-      FOREVER::LogError(                                                   \
-          FOREVER_ASSERT_MESSAGE_PREFIX FOREVER_EXPAND_STRINGIFY(         \
-              expression));                                                 \
-      FOREVER::LogAssert(__VA_ARGS__);                                     \
-    }                                                                       \
+  do {                                                                     \
+    if (!(condition)) {                                                    \
+      FOREVER::LOG::LogError(                                              \
+          FOREVER_ASSERT_MESSAGE_PREFIX FOREVER_EXPAND_STRINGIFY(          \
+              expression));                                                \
+      FOREVER::LOG::LogAssert(__VA_ARGS__);                                \
+      FOREVER_LOG(ERROR) <<                                                \
+      FOREVER_ASSERT_MESSAGE_PREFIX FOREVER_EXPAND_STRINGIFY(              \
+              expression);                                                 \
+      FOREVER_LOG(FATAL) << (__VA_ARGS__);                                 \
+    }                                                                      \
   } while (false)
 
 // Assert condition is true otherwise display the specified expression,

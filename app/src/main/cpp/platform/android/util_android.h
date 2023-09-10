@@ -400,7 +400,7 @@ std::string GetMessageFromException(JNIEnv* env, jobject exception);
 //
 // If an exception occurred, this function will clear it and return true.
 // Otherwise it will return false.
-bool LogException(JNIEnv* env, LogLevel log_level = kLogLevelError,
+bool LogException(JNIEnv* env, LOG::LogLevel log_level = LOG::kLogLevelError,
                   const char* log_fmt = nullptr, ...);
 // Returns a pointer to the JNI environment.  Also, registers a destructor
 // to automatically detach the thread from the JVM when it exits.  (Failure

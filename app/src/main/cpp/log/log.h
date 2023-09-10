@@ -3,23 +3,25 @@
 
 /// @brief Namespace that encompasses all Firebase APIs.
 #include <cstdarg>
+#include "log_level.h"
 
 namespace FOREVER {
+namespace LOG {
 
 /// @brief Levels used when logging messages.
 enum LogLevel {
   /// Verbose Log Level
-  kLogLevelVerbose = 0,
+  kLogLevelVerbose = LOG_VERBOSE,
   /// Debug Log Level
-  kLogLevelDebug,
+  kLogLevelDebug = LOG_DEBUG,
   /// Info Log Level
-  kLogLevelInfo,
+  kLogLevelInfo = LOG_INFO,
   /// Warning Log Level
-  kLogLevelWarning,
+  kLogLevelWarning = LOG_WARNING,
   /// Error Log Level
-  kLogLevelError,
+  kLogLevelError = LOG_ERROR,
   /// Assert Log Level
-  kLogLevelAssert,
+  kLogLevelAssert = LOG_FATAL,
 };
 
 /// @brief Sets the logging verbosity.
@@ -70,6 +72,7 @@ LogCallback LogGetCallback(void** callback_data);
 void LogInitialize();
 
 #define FOREVER_ARRAYSIZE(x) (sizeof(x) / sizeof((x)[0]))
+}  // namespace LOG
 }  // namespace FOREVER
 
 #endif  // FOREVER_LOG_H_

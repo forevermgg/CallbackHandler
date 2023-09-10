@@ -10,7 +10,7 @@
 #include "../memory/mutex.h"
 
 namespace FOREVER {
-
+namespace LOG {
 // Default log callback.
 static void DefaultLogCallback(LogLevel log_level, const char* message,
                                void* /*callback_data*/);
@@ -143,4 +143,5 @@ LogCallback LogGetCallback(void** callback_data) {
   *callback_data = g_log_callback_data;
   return g_log_callback;
 }
+}  // namespace LOG
 }  // namespace FOREVER

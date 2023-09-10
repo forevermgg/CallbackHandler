@@ -8,7 +8,7 @@
 #include <stdarg.h>
 
 namespace FOREVER {
-
+namespace LOG {
 const char* kDefaultTag = "forever";
 
 void LogInitialize() {}
@@ -51,4 +51,5 @@ void LogMessageV(LogLevel log_level, const char* format, va_list args) {
       break;
   }
 }
+}  // namespace LOG
 }  // namespace FOREVER

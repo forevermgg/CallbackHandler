@@ -50,7 +50,7 @@ bool LookupMethodIds(JNIEnv* env, jclass clazz,
   FOREVER_ASSERT(method_ids);
   FOREVER_ASSERT_MESSAGE_RETURN(false, clazz, kMissingJavaClassError,
                                 class_name, class_name);
-  LogDebug("Looking up methods for %s", class_name);
+  FOREVER::LOG::LogDebug("Looking up methods for %s", class_name);
   for (size_t i = 0; i < number_of_method_name_signatures; ++i) {
     const MethodNameSignature& method = method_name_signatures[i];
     if (method.optional == kMethodOptional && method.name == nullptr) {
@@ -73,7 +73,7 @@ bool LookupMethodIds(JNIEnv* env, jclass clazz,
              "Method %s.%s (signature '%s', %s)", class_name, method.name,
              method.signature,
              method.type == kMethodTypeInstance ? "instance" : "static");
-    LogDebug("%s (optional %d) 0x%08x%s", method_message,
+    FOREVER::LOG::LogDebug("%s (optional %d) 0x%08x%s", method_message,
              (method.optional == kMethodOptional) ? 1 : 0,
              static_cast<int>(reinterpret_cast<intptr_t>(method_ids[i])),
              method_ids[i] ? "" : " (not found)");
@@ -95,7 +95,7 @@ bool LookupFieldIds(JNIEnv* env, jclass clazz,
   FOREVER_ASSERT(field_ids);
   FOREVER_ASSERT_MESSAGE_RETURN(false, clazz, kMissingJavaClassError,
                                 class_name, class_name);
-  LogDebug("Looking up fields for %s", class_name);
+  FOREVER::LOG::LogDebug("Looking up fields for %s", class_name);
   for (size_t i = 0; i < number_of_field_descriptors; ++i) {
     const FieldDescriptor& field = field_descriptors[i];
     if (field.optional == kMethodOptional && field.name == nullptr) {
@@ -118,7 +118,7 @@ bool LookupFieldIds(JNIEnv* env, jclass clazz,
              "Field %s.%s (signature '%s', %s)", class_name, field.name,
              field.signature,
              field.type == kFieldTypeInstance ? "instance" : "static");
-    LogDebug("%s (optional %d) 0x%08x%s", field_message,
+    FOREVER::LOG::LogDebug("%s (optional %d) 0x%08x%s", field_message,
              (field.optional == kMethodOptional) ? 1 : 0,
              static_cast<int>(reinterpret_cast<intptr_t>(field_ids[i])),
              field_ids[i] ? "" : " (not found)");
@@ -134,24 +134,24 @@ bool LookupFieldIds(JNIEnv* env, jclass clazz,
 jclass FindClassGlobal(
     JNIEnv* env, const std::vector<INTERNAL::EmbeddedFile>* embedded_files,
     const char* class_name, ClassRequirement optional) {
-  LogDebug("Looking up class %s", class_name);
+  FOREVER::LOG::LogDebug("Looking up class %s", class_name);
   jclass local_class = FindClass(env, class_name);
-  LogDebug("Class %s, lref 0x%08x", class_name,
+  FOREVER::LOG::LogDebug("Class %s, lref 0x%08x", class_name,
            static_cast<int>(reinterpret_cast<intptr_t>(local_class)));
   if (!local_class) {
     if (optional == kClassRequired) {
-      LogError(kMissingJavaClassError, class_name, class_name);
+      FOREVER::LOG::LogError(kMissingJavaClassError, class_name, class_name);
     }
     return nullptr;
   }
   jclass global_class = static_cast<jclass>(env->NewGlobalRef(local_class));
   env->DeleteLocalRef(local_class);
-  LogDebug("Class %s, gref 0x%08x", class_name,
+  FOREVER::LOG::LogDebug("Class %s, gref 0x%08x", class_name,
            static_cast<int>(reinterpret_cast<intptr_t>(global_class)));
   CheckAndClearJniExceptions(env);
   if (!global_class) {
     if (optional == kClassRequired) {
-      LogError(kMissingJavaClassError, class_name, class_name);
+      FOREVER::LOG::LogError(kMissingJavaClassError, class_name, class_name);
     }
     return nullptr;
   }
@@ -269,7 +269,7 @@ std::string GetMessageFromException(JNIEnv* env, jobject exception) {
   return std::string();
 }
 
-bool LogException(JNIEnv* env, LogLevel log_level, const char* log_fmt, ...) {
+bool LogException(JNIEnv* env, FOREVER::LOG::LogLevel log_level, const char* log_fmt, ...) {
   jobject exception = env->ExceptionOccurred();
   if (exception != nullptr) {
     env->ExceptionClear();
@@ -291,7 +291,7 @@ bool LogException(JNIEnv* env, LogLevel log_level, const char* log_fmt, ...) {
     if (message) {
       std::string message_str = JniStringToString(env, message);
       if (log_fmt == nullptr) {
-        LogMessage(log_level, "%s", message_str.c_str());
+        FOREVER::LOG::LogMessage(log_level, "%s", message_str.c_str());
       } else {
         static char buf[512];
         va_list list;
@@ -300,7 +300,7 @@ bool LogException(JNIEnv* env, LogLevel log_level, const char* log_fmt, ...) {
         va_end(list);
         strncat(buf, ": ", sizeof(buf) - 1);
         strncat(buf, message_str.c_str(), sizeof(buf) - 1);
-        LogMessage(log_level, "%s", buf);
+        FOREVER::LOG::LogMessage(log_level, "%s", buf);
       }
     }
     env->DeleteLocalRef(exception);

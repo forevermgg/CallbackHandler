@@ -70,6 +70,7 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         platform/android/embedded_file.h
         platform/android/jni_weak_ref.h
         platform/android/jni_weak_ref.cc
+        platform/android/load_class.h
         platform/android/scoped_java_ref.h
         platform/android/scoped_java_ref.cc
         platform/android/string_conversion.h

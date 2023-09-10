@@ -4,6 +4,10 @@
 
 #include "embedded_file.h"
 #include "log.h"
+// To ensure that Proguard doesn't strip the classes you're using, place this
+// string directly before the JNI class string in your METHOD_LOOKUP_DEFINITION
+// macro invocation.
+#define PROGUARD_KEEP_CLASS "%PG%"
 
 namespace FOREVER {
 typedef ::JNINativeMethod JNINativeMethod;

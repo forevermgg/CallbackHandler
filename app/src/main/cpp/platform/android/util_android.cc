@@ -29,9 +29,23 @@ static const char kMissingJavaMethodFieldError[] =
     "(Ljava/lang/String;)Ljava/lang/Class;")
 // clang-format on
 METHOD_LOOKUP_DECLARATION(class_loader, CLASS_LOADER_METHODS)
+// ClassLoader比较常用的分为两种，PathClassLoader和DexClassLoader，虽然两者继承于BaseDexClassLoader，
+// BaseDexClassLoader继承于ClassLoader，但是前者只能加载已安装的Apk里面的dex文件，后者则支持加载apk、
+// dex以及jar，也可以从SD卡里面加载。
 METHOD_LOOKUP_DEFINITION(class_loader, "java/lang/ClassLoader",
                          CLASS_LOADER_METHODS)
 
+// clang-format off
+#define DEX_CLASS_LOADER_METHODS(X) \
+  X(Constructor, "<init>", \
+    "(Ljava/lang/String;Ljava/lang/String;" \
+    "Ljava/lang/String;Ljava/lang/ClassLoader;)V"), \
+  X(LoadClass, "loadClass", "(Ljava/lang/String;)Ljava/lang/Class;")
+// clang-format on
+METHOD_LOOKUP_DECLARATION(dex_class_loader, DEX_CLASS_LOADER_METHODS)
+METHOD_LOOKUP_DEFINITION(dex_class_loader,
+                         PROGUARD_KEEP_CLASS "dalvik/system/DexClassLoader",
+                         DEX_CLASS_LOADER_METHODS)
 // clang-format off
 #define THROWABLE_METHODS(X)               \
     X(GetLocalizedMessage, "getLocalizedMessage", "()Ljava/lang/String;"), \
@@ -73,10 +87,11 @@ bool LookupMethodIds(JNIEnv* env, jclass clazz,
              "Method %s.%s (signature '%s', %s)", class_name, method.name,
              method.signature,
              method.type == kMethodTypeInstance ? "instance" : "static");
-    FOREVER::LOG::LogDebug("%s (optional %d) 0x%08x%s", method_message,
-             (method.optional == kMethodOptional) ? 1 : 0,
-             static_cast<int>(reinterpret_cast<intptr_t>(method_ids[i])),
-             method_ids[i] ? "" : " (not found)");
+    FOREVER::LOG::LogDebug(
+        "%s (optional %d) 0x%08x%s", method_message,
+        (method.optional == kMethodOptional) ? 1 : 0,
+        static_cast<int>(reinterpret_cast<intptr_t>(method_ids[i])),
+        method_ids[i] ? "" : " (not found)");
     FOREVER_ASSERT_MESSAGE_RETURN(
         false, method_ids[i] || (method.optional == kMethodOptional),
         kMissingJavaMethodFieldError, method_message, class_name);
@@ -118,10 +133,11 @@ bool LookupFieldIds(JNIEnv* env, jclass clazz,
              "Field %s.%s (signature '%s', %s)", class_name, field.name,
              field.signature,
              field.type == kFieldTypeInstance ? "instance" : "static");
-    FOREVER::LOG::LogDebug("%s (optional %d) 0x%08x%s", field_message,
-             (field.optional == kMethodOptional) ? 1 : 0,
-             static_cast<int>(reinterpret_cast<intptr_t>(field_ids[i])),
-             field_ids[i] ? "" : " (not found)");
+    FOREVER::LOG::LogDebug(
+        "%s (optional %d) 0x%08x%s", field_message,
+        (field.optional == kMethodOptional) ? 1 : 0,
+        static_cast<int>(reinterpret_cast<intptr_t>(field_ids[i])),
+        field_ids[i] ? "" : " (not found)");
     FOREVER_ASSERT_MESSAGE_RETURN(
         false, field_ids[i] || (field.optional == kMethodOptional),
         kMissingJavaMethodFieldError, field_message, class_name);
@@ -136,8 +152,9 @@ jclass FindClassGlobal(
     const char* class_name, ClassRequirement optional) {
   FOREVER::LOG::LogDebug("Looking up class %s", class_name);
   jclass local_class = FindClass(env, class_name);
-  FOREVER::LOG::LogDebug("Class %s, lref 0x%08x", class_name,
-           static_cast<int>(reinterpret_cast<intptr_t>(local_class)));
+  FOREVER::LOG::LogDebug(
+      "Class %s, lref 0x%08x", class_name,
+      static_cast<int>(reinterpret_cast<intptr_t>(local_class)));
   if (!local_class) {
     if (optional == kClassRequired) {
       FOREVER::LOG::LogError(kMissingJavaClassError, class_name, class_name);
@@ -146,8 +163,9 @@ jclass FindClassGlobal(
   }
   jclass global_class = static_cast<jclass>(env->NewGlobalRef(local_class));
   env->DeleteLocalRef(local_class);
-  FOREVER::LOG::LogDebug("Class %s, gref 0x%08x", class_name,
-           static_cast<int>(reinterpret_cast<intptr_t>(global_class)));
+  FOREVER::LOG::LogDebug(
+      "Class %s, gref 0x%08x", class_name,
+      static_cast<int>(reinterpret_cast<intptr_t>(global_class)));
   CheckAndClearJniExceptions(env);
   if (!global_class) {
     if (optional == kClassRequired) {
@@ -269,7 +287,8 @@ std::string GetMessageFromException(JNIEnv* env, jobject exception) {
   return std::string();
 }
 
-bool LogException(JNIEnv* env, FOREVER::LOG::LogLevel log_level, const char* log_fmt, ...) {
+bool LogException(JNIEnv* env, FOREVER::LOG::LogLevel log_level,
+                  const char* log_fmt, ...) {
   jobject exception = env->ExceptionOccurred();
   if (exception != nullptr) {
     env->ExceptionClear();
@@ -351,9 +370,7 @@ jint AttachCurrentThread(JavaVM* java_vm, JNIEnv** env) {
 
 // Release cached classes.
 void ReleaseClasses(JNIEnv* env) { throwable::ReleaseClass(env); }
-bool Initialize(JNIEnv* env) {
-  return throwable::CacheMethodIds(env);
-}
+bool Initialize(JNIEnv* env) { return throwable::CacheMethodIds(env); }
 }  // namespace UTIL
 // NOLINTNEXTLINE - allow namespace overridden
 }  // namespace FOREVER

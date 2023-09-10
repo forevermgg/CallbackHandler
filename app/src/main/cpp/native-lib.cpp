@@ -12,9 +12,27 @@
 #include "log/logging.h"
 #include "memory/mutex.h"
 #include "generate.h"
-using PFN_FROMHARDWAREBUFFER = AHardwareBuffer* (*)(JNIEnv*, jobject);
-static PFN_FROMHARDWAREBUFFER AHardwareBuffer_fromHardwareBuffer_fn = nullptr;
-static bool sHardwareBufferSupported = true;
+
+// Find an Android SDK FirebaseApp instance by name.
+// Returns a local jobject reference if successful, nullptr otherwise.
+static jobject GetPlatformAppByName(JNIEnv* jni_env, const char* name) {
+  jobject platform_app;
+  jobject name_string = jni_env->NewStringUTF(name);
+  platform_app = jni_env->CallStaticObjectMethod(
+          app::GetClass(), app::GetMethodId(app::kGetInstanceByName),
+          name_string);
+  jni_env->DeleteLocalRef(name_string);
+  if (jni_env->ExceptionCheck()) {
+    // Explicitly set `platform_app` to `NULL` if an exception was thrown
+    // because on KitKat (API 19) `CallStaticObjectMethod()` may return garbage
+    // instead of `NULL` if an exception was thrown, and callers of this
+    // function expect `NULL` to be returned if the app was not found.
+    platform_app = NULL;  // NOLINT
+  }
+  jni_env->ExceptionClear();
+  return platform_app;
+}
+
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_mgg_callbackhandler_MainActivity_stringFromJNI(JNIEnv* env,
                                                         jobject /* this */) {

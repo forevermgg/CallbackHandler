@@ -362,6 +362,27 @@ bool LookupFieldIds(JNIEnv* env, jclass clazz,
       METHOD_LOOKUP_DEFINITION_3(__VA_ARGS__), numargs2(__VA_ARGS__), \
       numargs1(__VA_ARGS__), numargs0(__VA_ARGS))
 
+// Used to call android.app.Activity methods.
+// clang-format off
+#define ACTIVITY_BASE_METHODS(X)                                        \
+  X(GetApplicationContext, "getApplicationContext",                     \
+  "()Landroid/content/Context;"),                                       \
+  X(GetCacheDir, "getCacheDir", "()Ljava/io/File;"),                    \
+  X(GetClassLoader, "getClassLoader", "()Ljava/lang/ClassLoader;"),     \
+  X(GetIntent, "getIntent", "()Landroid/content/Intent;"),              \
+  X(GetPackageName, "getPackageName", "()Ljava/lang/String;"),          \
+  X(GetResources, "getResources", "()Landroid/content/res/Resources;"), \
+  X(Finish, "finish", "()V"),                                           \
+  X(GetContentResolver, "getContentResolver",                           \
+    "()Landroid/content/ContentResolver;"),                             \
+  X(GetString, "getString", "(I)Ljava/lang/String;")
+#define ACTIVITY_METHODS(X)                                             \
+  ACTIVITY_BASE_METHODS(X),                                             \
+  X(GetCodeCacheDir, "getCodeCacheDir", "()Ljava/io/File;",             \
+    UTIL::kMethodTypeInstance, UTIL::kMethodOptional)
+// clang-format on
+METHOD_LOOKUP_DECLARATION(activity, ACTIVITY_METHODS)
+
 // Find a class and retrieve a global reference to it.
 // If a set of files is provided and the class isn't found in the default class
 // path, the files will be searched for the class and loaded.

@@ -55,6 +55,19 @@ METHOD_LOOKUP_DEFINITION(dex_class_loader,
 METHOD_LOOKUP_DECLARATION(throwable, THROWABLE_METHODS);
 METHOD_LOOKUP_DEFINITION(throwable, "java/lang/Throwable", THROWABLE_METHODS)
 
+// clang-format off
+#define FOREVER_APP_METHODS(X)                                                \
+  X(GetInstance, "getInstance", "()Lcom/mgg/callbackhandler/LibCheckerApp;",         \
+    FOREVER::UTIL::kMethodTypeStatic)
+// clang-format on
+
+METHOD_LOOKUP_DECLARATION(app, FOREVER_APP_METHODS)
+METHOD_LOOKUP_DEFINITION(app,
+                         PROGUARD_KEEP_CLASS "com/mgg/callbackhandler/LibCheckerApp",
+                         FOREVER_APP_METHODS)
+
+METHOD_LOOKUP_DEFINITION(activity, "android/app/Activity", ACTIVITY_METHODS)
+
 bool LookupMethodIds(JNIEnv* env, jclass clazz,
                      const MethodNameSignature* method_name_signatures,
                      size_t number_of_method_name_signatures,

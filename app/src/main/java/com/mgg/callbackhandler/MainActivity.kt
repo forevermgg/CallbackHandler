@@ -22,6 +22,7 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        Log.e("FOREVER_TEST", "test")
         val linker = Linker()
         linker.loadLibrary("callbackhandler")
         binding.sampleText.text = stringFromJNI()
@@ -37,7 +38,6 @@ class MainActivity : AppCompatActivity() {
         test.setCompletedCallback(Handler(Looper.getMainLooper())) {
             Timber.e("Test JavaSetCompletedCallback")
         }
-        Log.e("FOREVER_TEST", "test")
     }
 
     private fun test() {

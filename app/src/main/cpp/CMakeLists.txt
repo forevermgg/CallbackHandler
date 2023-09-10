@@ -48,16 +48,18 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         platform/android/thread_local.cc
         platform/android/jni_android.h
         platform/android/jni_android.cc
+        generate.h
         linker_jni.h
         linker_jni.cc
+        log/log.h
+        log/log.cc
+        log/log_assert.h
         log/log_level.h
         log/log_settings.h
         log/log_settings.cc
         log/log_settings_state.cc
         log/logging.h
         log/logging.cc
-        log/log.h
-        log/log.cc
         log/log_android.cc
         log/log_android_callback.cc
         memory/mutex.h
@@ -65,12 +67,15 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         memory/singleton.h
         memory/Condition.h
         memory/Invocable.h
+        platform/android/embedded_file.h
         platform/android/jni_weak_ref.h
         platform/android/jni_weak_ref.cc
         platform/android/scoped_java_ref.h
         platform/android/scoped_java_ref.cc
         platform/android/string_conversion.h
         platform/android/string_conversion.cc
+        platform/android/util_android.h
+        platform/android/util_android.cc
         thread/ThreadUtils.h
         thread/ThreadUtils.cpp
         common/NioUtils.h

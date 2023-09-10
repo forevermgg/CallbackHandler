@@ -7,6 +7,7 @@
 #include <mutex>
 
 #include "mutex.h"
+#include "../memory/mutex.h"
 
 namespace FOREVER {
 
@@ -51,43 +52,6 @@ static void DefaultLogCallback(LogLevel log_level, const char* message,
   }
 }
 
-// Log a message to a log file.
-static void LogToFile(LogLevel log_level, const char* format, va_list args) {
-#define FOREVER_LOG_FILENAME "forever.log"
-  static FILE* log_file = nullptr;
-  static bool attempted_to_open_log_file = false;
-  static const char* kLogLevelToPrefixString[] = {
-      "V",  // kLogLevelVerbose
-      "D",  // kLogLevelDebug
-      "I",  // kLogLevelInfo
-      "W",  // kLogLevelWarning
-      "E",  // kLogLevelError
-      "A",  // kLogLevelAssert
-  };
-  if (attempted_to_open_log_file) {
-    if (log_file) {
-      fprintf(log_file,
-              "%s: ", log_level ? kLogLevelToPrefixString[log_level] : "?");
-      vfprintf(log_file, format, args);
-      fprintf(log_file, "\n");
-      // Since we could crash at some point (possibly why we have logging on),
-      // flush to disk.
-      fflush(log_file);
-    }
-  } else {
-    MutexLock lock(*g_log_mutex);
-    if (!log_file) {
-      log_file = fopen(FOREVER_LOG_FILENAME, "wt");
-      if (!log_file) {
-        g_log_callback(kLogLevelError,
-                       "Unable to open log file " FOREVER_LOG_FILENAME,
-                       g_log_callback_data);
-      }
-      attempted_to_open_log_file = true;
-    }
-  }
-}
-
 // Log a firebase message (implemented by the platform specific logger).
 void LogMessageWithCallbackV(LogLevel log_level, const char* format,
                              va_list args) {
@@ -100,9 +64,6 @@ void LogMessageWithCallbackV(LogLevel log_level, const char* format,
   MutexLock lock(*g_log_mutex);
 
   LogInitialize();
-  va_list log_to_file_args;
-  va_copy(log_to_file_args, args);
-  LogToFile(log_level, format, log_to_file_args);
   if (log_level < GetLogLevel()) return;
 
   static char log_buffer[512] = {0};

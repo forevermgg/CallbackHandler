@@ -5,6 +5,7 @@
 #include "log/log_level.h"
 #include "log/log_settings.h"
 #include "log/logging.h"
+#include "platform/android/util_android.h"
 
 JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved) {
   JNIEnv *env;

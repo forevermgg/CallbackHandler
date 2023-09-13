@@ -65,5 +65,5 @@ dependencies {
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation("com.jakewharton.timber:timber:5.0.1")
-    implementation("com.google.flatbuffers:flatbuffers-java:1.12.0")
+    implementation("com.google.flatbuffers:flatbuffers-java:23.5.26")
 }

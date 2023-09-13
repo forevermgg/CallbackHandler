@@ -14,7 +14,7 @@ afterEvaluate {
                 executable 'git'
                 args 'clone',
                         '--branch',
-                        'v1.12.0',
+                        'v23.5.26',
                         '--depth',
                         '1',
                         'https://github.com/google/flatbuffers.git',

@@ -4,14 +4,11 @@
 
 # Sets the minimum CMake version required for this project.
 cmake_minimum_required(VERSION 3.22.1)
-message("CMAKE_CURRENT_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}")
+#[[message("CMAKE_CURRENT_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}")
 message("CMAKE_CURRENT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}")
 message("CMAKE_CURRENT_LIST_DIR ${CMAKE_CURRENT_LIST_DIR}")
 message("CMAKE_CURRENT_LIST_FILE ${CMAKE_CURRENT_LIST_FILE}")
-message("CMAKE_CURRENT_LIST_LINE ${CMAKE_CURRENT_LIST_LINE}")
-set(FLATBUFFERS_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../../third_party/flatbuffers)
-message("FLATBUFFERS_SOURCE_DIR ${FLATBUFFERS_SOURCE_DIR}")
-
+message("CMAKE_CURRENT_LIST_LINE ${CMAKE_CURRENT_LIST_LINE}")]]
 # Declares the project name. The project name can be accessed via ${ PROJECT_NAME},
 # Since this is the top level CMakeLists.txt, the project name is also accessible
 # with ${CMAKE_PROJECT_NAME} (both CMake variables are in-sync within the top level
@@ -22,8 +19,12 @@ include_directories(common)
 include_directories(log)
 include_directories(platform/android)
 include_directories(memory)
-include_directories(${FLATBUFFERS_SOURCE_DIR}/include)
+set(FLATBUFFERS_SRC_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/../../../../third_party/flatbuffers/include)
+message("FLATBUFFERS_SRC_INCLUDE ${FLATBUFFERS_SRC_INCLUDE}")
+add_subdirectory(flatbuffers)
+include_directories(${FLATBUFFERS_SRC_INCLUDE})
 
+FILE(GLOB Generated_SRCS generated/*.h)
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
 # You can define multiple libraries, and CMake builds them for you.
@@ -91,7 +92,8 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         Test.cpp
         Test.h
         test_jni.cc
-        native-lib.cpp)
+        native-lib.cpp
+        ${Generated_SRCS})
 
 add_library("chromium_android_linker" SHARED
         # List C/C++ source files with relative paths to this CMakeLists.txt.
@@ -99,25 +101,13 @@ add_library("chromium_android_linker" SHARED
         linker_jni.h
         linker_jni.cc)
 
-
-# If building for Android or iOS, include the Flatbuffers source files directly.
-set(app_flatbuffers_srcs
-        ${FLATBUFFERS_SOURCE_DIR}/src/idl_parser.cpp
-        ${FLATBUFFERS_SOURCE_DIR}/src/idl_gen_text.cpp
-        ${FLATBUFFERS_SOURCE_DIR}/src/reflection.cpp
-        ${FLATBUFFERS_SOURCE_DIR}/src/util.cpp)
-set(app_flatbuffers_lib)
-
-add_library(firebase_app STATIC
-        ${app_flatbuffers_srcs})
-
 # Specifies libraries CMake should link to your target library. You
 # can link libraries from various origins, such as libraries defined in this
 # build script, prebuilt third-party libraries, or Android system libraries.
 target_link_libraries(${CMAKE_PROJECT_NAME}
         # List libraries link to the target library
         android
-        firebase_app
+        flatbuffers
         log)
 
 target_link_libraries("chromium_android_linker"

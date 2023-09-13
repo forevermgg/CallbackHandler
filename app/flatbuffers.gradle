@@ -1,0 +1,69 @@
+
+afterEvaluate {
+    // Define a Task that will add a Flatbuffers dependency, downloading
+    // the source from GitHub if needed.
+    println "projectDir:"+projectDir;
+    println "rootDir:"+rootDir;
+    println "buildDir:"+buildDir;
+    task generateFlatbufferFiles {
+        // Locate or download flatbuffers.
+        def flatbuffersDir = "$rootDir/third_party/flatbuffers"
+        def flatbuffersFolder = new File(flatbuffersDir)
+        if (!flatbuffersFolder.exists()) {
+            exec {
+                executable 'git'
+                args 'clone',
+                        '--branch',
+                        'v1.12.0',
+                        '--depth',
+                        '1',
+                        'https://github.com/google/flatbuffers.git',
+                        flatbuffersDir
+            }
+        }
+
+        // Locate or build flatc.
+        String flatcDirPath = "$flatbuffersDir/flatc_build"
+        def flatcDir = new File(flatcDirPath)
+        flatcDir.mkdir()
+
+        String flatcExecDirPath = flatcDirPath
+        String flatcFilename = "flatc"
+        if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+            flatcFilename += ".exe"
+            flatcExecDirPath = "$flatcDirPath/Debug"
+        }
+
+        def flatcExecDir = new File(flatcExecDirPath)
+
+        def flatcExec = new File(flatcExecDir, flatcFilename)
+        if (!flatcExec.exists()) {
+            exec {
+                executable 'cmake'
+                args '..'
+                workingDir "${flatcDir.getPath()}"
+            }
+            // brew install cmak
+            // Cannot run program "cmake"
+            exec {
+                executable 'cmake'
+                args '--build',
+                        '.',
+                        '--target',
+                        'flatc'
+                workingDir "${flatcDir.getPath()}"
+            }
+        }
+
+        // Generate the java files from the schema files.
+        def schemaFile = new File("$rootDir/app/src/main/schemas/messaging.fbs")
+        exec {
+            executable "${flatcExec.getPath()}"
+            args '--java',
+                    '-o',
+                    "$buildDir/flatbuffer_generated",
+                    "${schemaFile.getPath()}"
+        }
+    }
+    preBuild.dependsOn generateFlatbufferFiles
+}

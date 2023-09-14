@@ -1,6 +1,3 @@
-import com.android.build.api.dsl.Packaging
-import org.jetbrains.kotlin.cli.jvm.main
-
 @Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
     alias(libs.plugins.com.android.application)
@@ -54,6 +51,9 @@ android {
 }
 apply(
     "flatbuffers.gradle"
+)
+apply(
+    "leveldb.gradle"
 )
 dependencies {
 

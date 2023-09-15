@@ -54,16 +54,6 @@ afterEvaluate {
                 workingDir "${flatcDir.getPath()}"
             }
         }
-
-        // Generate the java files from the schema files.
-        /*def schemaFile = new File("$rootDir/app/src/main/schemas/messaging.fbs")
-        exec {
-            executable "${flatcExec.getPath()}"
-            args '--java',
-                    '-o',
-                    "$buildDir/flatbuffer_generated",
-                    "${schemaFile.getPath()}"
-        }*/
     }
 
     task generateFbsCpp(type: Exec) {

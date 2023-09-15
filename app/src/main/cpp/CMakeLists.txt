@@ -21,8 +21,13 @@ include_directories(platform/android)
 include_directories(memory)
 set(FLATBUFFERS_SRC_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/../../../../third_party/flatbuffers/include)
 message("FLATBUFFERS_SRC_INCLUDE ${FLATBUFFERS_SRC_INCLUDE}")
+set(LEVELDB_SRC_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/../../../../third_party/leveldb/include)
+message("LEVELDB_SRC_INCLUDE ${LEVELDB_SRC_INCLUDE}")
 add_subdirectory(flatbuffers)
+add_subdirectory(leveldb)
+add_subdirectory(snappy)
 include_directories(${FLATBUFFERS_SRC_INCLUDE})
+include_directories(${LEVELDB_SRC_INCLUDE})
 
 FILE(GLOB Generated_SRCS generated/*.h)
 # Creates and names a library, sets it as either STATIC
@@ -108,6 +113,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         # List libraries link to the target library
         android
         flatbuffers
+        leveldb
         log)
 
 target_link_libraries("chromium_android_linker"

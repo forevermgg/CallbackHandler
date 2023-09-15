@@ -1,0 +1,36 @@
+afterEvaluate {
+    // Define a Task that will add a leveldb dependency, downloading
+    // the source from GitHub if needed.
+    println "projectDir:" + projectDir
+    println "rootDir:" + rootDir
+    println "buildDir:" + buildDir
+    task gitCheckOutSnappy {
+        // Locate or download snappy.
+        def snappyDir = "$rootDir/third_party/snappy"
+        def snappyFolder = new File(snappyDir)
+        if (!snappyFolder.exists()) {
+            exec {
+                executable 'git'
+                args 'clone',
+                        '--branch',
+                        '1.1.10',
+                        '--depth',
+                        '1',
+                        'https://github.com/google/snappy.git',
+                        snappyDir
+            }
+        }
+        /*String snappyDirPath = "$snappyDir/build"
+        def snappyLibDir = new File(snappyDirPath)
+        snappyLibDir.mkdir()
+        exec {
+            executable 'git'
+            args 'apply',
+                    '--check',
+                    '--directory',
+                    "$rootDir/third_party/snappy",
+                    "$rootDir/third_party/snappy_1.1.10.patch"
+        }*/
+    }
+    preBuild.dependsOn gitCheckOutSnappy
+}

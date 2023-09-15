@@ -1,4 +1,5 @@
 afterEvaluate {
+    // https://github.com/hf/leveldb-android/blob/master/leveldb/CMakeLists.txt
     // Define a Task that will add a leveldb dependency, downloading
     // the source from GitHub if needed.
     println "projectDir:"+projectDir;

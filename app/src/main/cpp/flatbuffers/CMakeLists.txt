@@ -10,7 +10,7 @@ message("FLATBUFFERS_SRC ${FLATBUFFERS_SRC}")
 
 include_directories(${FLATBUFFERS_SRC}/include)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -fexceptions -Wall -DFLATBUFFERS_TRACK_VERIFIER_BUFFER_SIZE")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -fexceptions -Wall -DFLATBUFFERS_TRACK_VERIFIER_BUFFER_SIZE")
 
 # Certain platforms such as ARM do not use signed chars by default
 # which causes issues with certain bounds checks.

@@ -55,6 +55,9 @@ apply(
 apply(
     "leveldb.gradle"
 )
+apply(
+    "snappy.gradle"
+)
 dependencies {
 
     implementation(libs.core.ktx)

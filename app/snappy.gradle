@@ -20,17 +20,12 @@ afterEvaluate {
                         snappyDir
             }
         }
-        /*String snappyDirPath = "$snappyDir/build"
-        def snappyLibDir = new File(snappyDirPath)
-        snappyLibDir.mkdir()
-        exec {
-            executable 'git'
-            args 'apply',
-                    '--check',
-                    '--directory',
-                    "$rootDir/third_party/snappy",
-                    "$rootDir/third_party/snappy_1.1.10.patch"
-        }*/
+    }
+
+    task copyTask(type: Copy) {
+        from "$rootDir/third_party/snappy-stubs-public.h"
+        into "$rootDir/third_party/snappy"
     }
     preBuild.dependsOn gitCheckOutSnappy
+    preBuild.dependsOn copyTask
 }

@@ -11,11 +11,18 @@ message("SNAPPY_SRC ${SNAPPY_SRC}")
 get_filename_component(SNAPPY_SRC "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../third_party/snappy" ABSOLUTE)
 message("SNAPPY_SRC: " ${SNAPPY_SRC})
 
+message("CMAKE_SOURCE_DIR: " ${CMAKE_SOURCE_DIR})
+
+# 设置静态库文件目录
+# set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../output/snappy/jniLibs/${ANDROID_ABI})
+
+# 动态库文件目录
+# set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../output/snappy/jniLibs/${ANDROID_ABI})
+
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
-
 
 set(Snappy_Library_SRCS
         # Provides a relative path to your source file(s).
@@ -32,7 +39,21 @@ set(Snappy_Library_SRCS
         ${SNAPPY_SRC}/snappy_compress_fuzzer.cc
         ${SNAPPY_SRC}/snappy_uncompress_fuzzer.cc
         )
+message("CMAKE_LIBRARY_OUTPUT_DIRECTORY: " ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 add_library( # Sets the name of the library.
         snappy
+        STATIC
         ${Snappy_Library_SRCS}
         )
+message("ARCHIVE_OUTPUT_DIRECTORY: " ${ARCHIVE_OUTPUT_DIRECTORY})
+message("LIBRARY_OUTPUT_PATH: " ${LIBRARY_OUTPUT_PATH})
+message("CMAKE_CURRENT_BINARY_DIR: " ${CMAKE_CURRENT_BINARY_DIR})
+message("CMAKE_INSTALL_PREFIX: " ${CMAKE_INSTALL_PREFIX})
+
+execute_process(
+        COMMAND
+        ${CMAKE_COMMAND}
+        -E
+        copy
+        ${CMAKE_CURRENT_BINARY_DIR}/libsnappy.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../output/snappy/jniLibs/${ANDROID_ABI}/libsnappy.a)

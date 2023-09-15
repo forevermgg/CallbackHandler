@@ -21,7 +21,7 @@ afterEvaluate {
             }
         }
     }
-
+    // https://zhuanlan.zhihu.com/p/112294419
     task copyTask(type: Copy) {
         from "$rootDir/third_party/snappy-stubs-public.h"
         into "$rootDir/third_party/snappy"

@@ -19,3 +19,4 @@ local.properties
 /third_party/flatbuffers/
 /third_party/leveldb/
 /third_party/snappy/
+/output/

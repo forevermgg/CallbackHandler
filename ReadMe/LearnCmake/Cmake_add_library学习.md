@@ -7,13 +7,15 @@
 
 请注意，这行代码只是创建了一个空的库目标，需要在后续的代码中添加源文件并进行相关的配置和链接操作，才能最终生成可用的库文件。
 
-### add_library(utils STATIC IMPORTED)
+### add_library STATIC
 ```
 add_library(utils STATIC IMPORTED)
 set_target_properties(utils PROPERTIES IMPORTED_LOCATION
         ${FILAMENT_DIR}/lib/${ANDROID_ABI}/libutils.a)
+
+add_library(archive STATIC archive.cpp zip.cpp lzma.cpp)        
 ```
-### add_library(filament-jni SHARED src/main/cpp/*.*)
+### add_library SHARED
 ```
 add_library(filament-jni SHARED
     src/main/cpp/*.cpp

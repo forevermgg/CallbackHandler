@@ -172,6 +172,7 @@ set(GOOGLETEST_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../../third_party/googlete
 # Note: Once googletest is downloaded once, it won't be updated or
 # downloaded again unless you delete the "external/googletest"
 # directory.
+#[[
 if (NOT EXISTS ${GOOGLETEST_ROOT}/src/googletest/src/gtest-all.cc)
   configure_file(googletest.cmake
           ${CMAKE_CURRENT_SOURCE_DIR}/../../../../third_party/googletest/CMakeLists.txt COPYONLY)
@@ -188,3 +189,12 @@ if (NOT EXISTS ${GOOGLETEST_ROOT}/src/googletest/src/gtest-all.cc)
     message(FATAL_ERROR "Build step for googletest failed: ${result}")
   endif()
 endif()
+
+if(ANDROID)
+  # Build an Android application.
+  add_library(gtest STATIC
+          ${GOOGLETEST_ROOT}/src/googletest/src/gtest-all.cc)
+  target_include_directories(gtest
+          PRIVATE ${GOOGLETEST_ROOT}/src/googletest
+          PUBLIC ${GOOGLETEST_ROOT}/src/googletest/include)
+endif()]]

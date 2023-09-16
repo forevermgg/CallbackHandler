@@ -116,8 +116,75 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         snappy
         leveldb
         log)
-
+if(ANDROID)
+  message("Forevermeng")
+endif()
 target_link_libraries("chromium_android_linker"
         # List libraries link to the target library
         android
         log)
+
+
+
+file(STRINGS "${CMAKE_SOURCE_DIR}/../../../../dependencies.list" DEPENDENCIES)
+foreach(LINE IN LISTS DEPENDENCIES)
+
+  string(REGEX MATCHALL "([^=]+)" KEY_VALUE "${LINE}")
+  list(LENGTH KEY_VALUE matches_count)
+  if(matches_count STREQUAL 2)
+    list(GET KEY_VALUE 0 KEY)
+    list(GET KEY_VALUE 1 VALUE)
+    set(DEP_${KEY} ${VALUE})
+    message("KEY = ${KEY} VALUE = ${VALUE}")
+  endif()
+endforeach()
+
+# find javah
+find_package(Java COMPONENTS Development)
+if (NOT Java_Development_FOUND)
+  if (DEFINED ENV{JAVA_HOME} AND EXISTS "$ENV{JAVA_HOME}/bin/javah")
+    set(Java_JAVAH_EXECUTABLE "$ENV{JAVA_HOME}/bin/javah")
+  elseif (EXISTS "/usr/bin/javah")
+    set(Java_JAVAH_EXECUTABLE "/usr/bin/javah")
+  else()
+    message(FATAL_ERROR "Cannot find javah")
+  endif()
+endif()
+
+FUNCTION(capitalizeFirstLetter var value)
+  string(SUBSTRING ${value} 0 1 firstLetter)
+  string(TOUPPER ${firstLetter} firstLetter)
+  string(REGEX REPLACE "^.(.*)" "${firstLetter}\\1" value "${value}")
+  set(${var} "${value}" PARENT_SCOPE)
+ENDFUNCTION(capitalizeFirstLetter)
+
+
+# Hack the memmove bug on Samsung device.
+if (ARMEABI OR ARMEABI_V7A)
+  message("Forevermeng ARMEABI OR ARMEABI_V7A")
+else()
+  message("Forevermeng NO ARMEABI OR ARMEABI_V7A")
+endif()
+
+
+# Download and unpack googletest (and googlemock) at configure time
+set(GOOGLETEST_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../../third_party/googletest)
+# Note: Once googletest is downloaded once, it won't be updated or
+# downloaded again unless you delete the "external/googletest"
+# directory.
+if (NOT EXISTS ${GOOGLETEST_ROOT}/src/googletest/src/gtest-all.cc)
+  configure_file(googletest.cmake
+          ${CMAKE_CURRENT_SOURCE_DIR}/../../../../third_party/googletest/CMakeLists.txt COPYONLY)
+  execute_process(COMMAND ${CMAKE_COMMAND} .
+          RESULT_VARIABLE result
+          WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../../../third_party/googletest )
+  if(result)
+    message(FATAL_ERROR "CMake step for googletest failed: ${result}")
+  endif()
+  execute_process(COMMAND ${CMAKE_COMMAND} --build .
+          RESULT_VARIABLE result
+          WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../../../third_party/googletest )
+  if(result)
+    message(FATAL_ERROR "Build step for googletest failed: ${result}")
+  endif()
+endif()

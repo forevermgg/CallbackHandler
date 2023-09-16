@@ -172,7 +172,6 @@ set(GOOGLETEST_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../../third_party/googlete
 # Note: Once googletest is downloaded once, it won't be updated or
 # downloaded again unless you delete the "external/googletest"
 # directory.
-#[[
 if (NOT EXISTS ${GOOGLETEST_ROOT}/src/googletest/src/gtest-all.cc)
   configure_file(googletest.cmake
           ${CMAKE_CURRENT_SOURCE_DIR}/../../../../third_party/googletest/CMakeLists.txt COPYONLY)
@@ -197,4 +196,4 @@ if(ANDROID)
   target_include_directories(gtest
           PRIVATE ${GOOGLETEST_ROOT}/src/googletest
           PUBLIC ${GOOGLETEST_ROOT}/src/googletest/include)
-endif()]]
+endif()

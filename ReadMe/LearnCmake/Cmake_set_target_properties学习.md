@@ -44,6 +44,14 @@ INTERFACE_INCLUDE_DIRECTORIES "${LibUV_INCLUDE_DIRS}"
 
 - `INTERFACE_INCLUDE_DIRECTORIES` 属性用于指定导入目标的接口头文件包含目录。`${LibUV_INCLUDE_DIRS}` 是一个 CMake 变量，它表示 LibUV 头文件的包含目录。将该变量赋值给 `INTERFACE_INCLUDE_DIRECTORIES` 属性，可以让依赖于该导入目标的其他目标能够正确地包含 LibUV 的头文件。
 
+```
+if(ANDROID)
+  include_directories(${TARGET_DIR}/include)
+  add_library(target SHARED IMPORTED)
+  set_target_properties(target PROPERTIES IMPORTED_LOCATION ${TARGET_DIR}/Android/${ANDROID_ABI}/libtarget.so)
+endif()
+```
+
 
 ### 5.设置目标的属性
 `set_target_properties(snappy PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})` 是一个 CMake 命令，用于设置目标（target）"snappy" 的属性。
@@ -60,6 +68,52 @@ INTERFACE_INCLUDE_DIRECTORIES "${LibUV_INCLUDE_DIRS}"
 #define SNAPPY_VERSION \
     ((SNAPPY_MAJOR << 16) | (SNAPPY_MINOR << 8) | SNAPPY_PATCHLEVEL)
 ```
+### 6.混淆 LINK_DEPENDS
+libfilament-jni.map
+```text
+LIBFILAMENT {
+  global:
+    Java_com_google_android_filament_*;
+    JNI*;
+    *filament*BufferObject*;
+    *filament*Camera*;
+    *filament*Color*;
+    *filament*Exposure*;
+    *filament*Skybox*;
+    *filament*Engine*;
+    *filament*RenderableManager*;
+    *filament*Aabb*;
+    *filament*IndirectLight*;
+    *filament*LightManager*;
+    *filament*Renderer*;
+    *filament*RenderTarget*;
+    *filament*Scene*;
+    *filament*ToneMapper*;
+    *filament*Transform*;
+    *filament*Material*;
+    *filament*IndexBuffer*;
+    *filament*VertexBuffer*;
+    *filament*View*;
+    *filament*Texture*;
+    *filament*geometry*;
+
+  local: *;
+};
+```
+libfilament-utils-jni.symbols
+```text
+_Java_com_google_android_filament_*
+```
+```cmake
+set(VERSION_SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/libfilament-jni.map")
+set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} -Wl,--version-script=${VERSION_SCRIPT}")
+# Force a relink when the version script is changed:
+set_target_properties(filament-jni PROPERTIES LINK_DEPENDS ${VERSION_SCRIPT})
+
+set_target_properties(filament-utils-jni PROPERTIES LINK_DEPENDS
+        ${CMAKE_CURRENT_SOURCE_DIR}/libfilament-utils-jni.symbols)
+```
+
 
 
 

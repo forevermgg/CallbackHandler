@@ -21,6 +21,3 @@ local.properties
 /third_party/snappy/
 /output/
 /third_party/googletest/
-/third_party/flatbuffers/
-/third_party/snappy/
-/third_party/snappy/snappy-stubs-public.h

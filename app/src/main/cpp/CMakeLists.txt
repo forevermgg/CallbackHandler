@@ -33,7 +33,7 @@ include_directories(${LEVELDB_SRC_INCLUDE})
 set(EXTERNAL_SRC ${CMAKE_CURRENT_SOURCE_DIR}/../../../../external/)
 message("EXTERNAL_SRC = ${EXTERNAL_SRC}/abseil-cpp")
 add_subdirectory(${EXTERNAL_SRC}/abseil-cpp ${EXTERNAL_SRC}/abseil-cpp/build)
-include(spdlog.camke)
+# include(spdlog.camke)
 
 FILE(GLOB Generated_SRCS generated/*.h)
 # Creates and names a library, sets it as either STATIC

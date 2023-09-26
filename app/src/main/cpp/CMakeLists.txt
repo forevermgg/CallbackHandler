@@ -33,7 +33,7 @@ include_directories(${LEVELDB_SRC_INCLUDE})
 set(EXTERNAL_SRC ${CMAKE_CURRENT_SOURCE_DIR}/../../../../external/)
 message("EXTERNAL_SRC = ${EXTERNAL_SRC}/abseil-cpp")
 add_subdirectory(${EXTERNAL_SRC}/abseil-cpp ${EXTERNAL_SRC}/abseil-cpp/build)
-# include(spdlog.camke)
+include(spdlog.camke)
 
 FILE(GLOB Generated_SRCS generated/*.h)
 # Creates and names a library, sets it as either STATIC
@@ -175,34 +175,3 @@ else()
   message("Forevermeng NO ARMEABI OR ARMEABI_V7A")
 endif()
 
-
-# Download and unpack googletest (and googlemock) at configure time
-set(GOOGLETEST_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../../third_party/googletest)
-# Note: Once googletest is downloaded once, it won't be updated or
-# downloaded again unless you delete the "external/googletest"
-# directory.
-if (NOT EXISTS ${GOOGLETEST_ROOT}/src/googletest/src/gtest-all.cc)
-  configure_file(googletest.cmake
-          ${CMAKE_CURRENT_SOURCE_DIR}/../../../../third_party/googletest/CMakeLists.txt COPYONLY)
-  execute_process(COMMAND ${CMAKE_COMMAND} .
-          RESULT_VARIABLE result
-          WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../../../third_party/googletest )
-  if(result)
-    message(FATAL_ERROR "CMake step for googletest failed: ${result}")
-  endif()
-  execute_process(COMMAND ${CMAKE_COMMAND} --build .
-          RESULT_VARIABLE result
-          WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../../../third_party/googletest )
-  if(result)
-    message(FATAL_ERROR "Build step for googletest failed: ${result}")
-  endif()
-endif()
-
-if(ANDROID)
-  # Build an Android application.
-  add_library(gtest STATIC
-          ${GOOGLETEST_ROOT}/src/googletest/src/gtest-all.cc)
-  target_include_directories(gtest
-          PRIVATE ${GOOGLETEST_ROOT}/src/googletest
-          PUBLIC ${GOOGLETEST_ROOT}/src/googletest/include)
-endif()

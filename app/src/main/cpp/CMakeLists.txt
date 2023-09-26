@@ -30,6 +30,7 @@ include_directories(${FLATBUFFERS_SRC_INCLUDE})
 include_directories(${LEVELDB_SRC_INCLUDE})
 
 
+# https://github.com/google/minimalloc/blob/main/CMakeLists.txt
 set(EXTERNAL_SRC ${CMAKE_CURRENT_SOURCE_DIR}/../../../../external/)
 message("EXTERNAL_SRC = ${EXTERNAL_SRC}/abseil-cpp")
 add_subdirectory(${EXTERNAL_SRC}/abseil-cpp ${EXTERNAL_SRC}/abseil-cpp/build)

@@ -61,6 +61,9 @@ apply(
 apply(
     "abseil-cpp.gradle"
 )
+apply(
+    "glog.gradle"
+)
 dependencies {
 
     implementation(libs.core.ktx)

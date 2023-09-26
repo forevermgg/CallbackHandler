@@ -1,0 +1,23 @@
+
+afterEvaluate {
+    println "projectDir:" + projectDir
+    println "rootDir:" + rootDir
+    println "buildDir:" + buildDir
+    task gitCheckOutGlog {
+        def glogDir = "$rootDir/external/glog"
+        def glogFolder = new File(glogDir)
+        if (!glogFolder.exists()) {
+            exec {
+                executable 'git'
+                args 'clone',
+                        '--branch',
+                        'v0.6.0',
+                        '--depth',
+                        '1',
+                        'https://github.com/google/glog.git',
+                        glogDir
+            }
+        }
+    }
+    preBuild.dependsOn gitCheckOutGlog
+}

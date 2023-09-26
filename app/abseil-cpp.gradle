@@ -23,5 +23,4 @@ afterEvaluate {
         }
     }
     preBuild.dependsOn gitCheckOutAbseil
-    preBuild.dependsOn copyTask
 }

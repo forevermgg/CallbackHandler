@@ -1,5 +1,5 @@
 afterEvaluate {
-    // Define a Task that will add a leveldb dependency, downloading
+    // Define a Task that will add a snappy dependency, downloading
     // the source from GitHub if needed.
     println "projectDir:" + projectDir
     println "rootDir:" + rootDir

@@ -35,6 +35,7 @@ set(EXTERNAL_SRC ${CMAKE_CURRENT_SOURCE_DIR}/../../../../external/)
 message("EXTERNAL_SRC = ${EXTERNAL_SRC}/abseil-cpp")
 add_subdirectory(${EXTERNAL_SRC}/abseil-cpp ${EXTERNAL_SRC}/abseil-cpp/build)
 # include(spdlog.camke)
+# add_subdirectory(${EXTERNAL_SRC}/glog ${EXTERNAL_SRC}/glog/build)
 
 FILE(GLOB Generated_SRCS generated/*.h)
 # Creates and names a library, sets it as either STATIC

@@ -177,3 +177,22 @@ else()
   message("Forevermeng NO ARMEABI OR ARMEABI_V7A")
 endif()
 
+# Set default build type.
+if(NOT CMAKE_BUILD_TYPE)
+  message(STATUS "Setting build type to 'RelWithDebInfo' as none was specified.")
+  set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING
+          "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel."
+          FORCE)
+else()
+  message("CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
+endif()
+
+
+# Check out Git submodules.
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.gitmodules")
+  execute_process (COMMAND git submodule update --init --recursive
+          WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+else()
+  message("gitmodules not found")
+endif()
+

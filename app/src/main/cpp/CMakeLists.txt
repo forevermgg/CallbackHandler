@@ -4,6 +4,13 @@
 
 # Sets the minimum CMake version required for this project.
 cmake_minimum_required(VERSION 3.22.1)
+# Require at least C++17
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+endif()
+if(${CMAKE_CXX_STANDARD} LESS 17)
+  message(FATAL_ERROR "Requires C++17 or later, but is configured for C++${CMAKE_CXX_STANDARD})")
+endif()
 #[[message("CMAKE_CURRENT_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}")
 message("CMAKE_CURRENT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}")
 message("CMAKE_CURRENT_LIST_DIR ${CMAKE_CURRENT_LIST_DIR}")
@@ -13,7 +20,9 @@ message("CMAKE_CURRENT_LIST_LINE ${CMAKE_CURRENT_LIST_LINE}")]]
 # Since this is the top level CMakeLists.txt, the project name is also accessible
 # with ${CMAKE_PROJECT_NAME} (both CMake variables are in-sync within the top level
 # build script scope).
-project("callbackhandler")
+project("callbackhandler" C CXX)
+# RE2 needs Pthreads on non-WIN32
+find_package(Threads)
 
 include_directories(common)
 include_directories(log)

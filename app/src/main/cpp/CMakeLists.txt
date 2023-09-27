@@ -29,6 +29,8 @@ add_subdirectory(snappy)
 include_directories(${FLATBUFFERS_SRC_INCLUDE})
 include_directories(${LEVELDB_SRC_INCLUDE})
 
+include(cmake/FindAtomics.cmake)
+
 
 # https://github.com/google/minimalloc/blob/main/CMakeLists.txt
 set(EXTERNAL_SRC ${CMAKE_CURRENT_SOURCE_DIR}/../../../../external/)

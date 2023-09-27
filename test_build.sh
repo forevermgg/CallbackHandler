@@ -18,3 +18,5 @@ echo "Building libraries for Oboe version "$version
 #./build_all_android.sh
 
 ABIS=("x86" "x86_64" "arm64-v8a" "armeabi-v7a")
+
+python3 utils/git-sync-deps.py

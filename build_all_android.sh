@@ -4,6 +4,11 @@
 
 #!/bin/bash
 
+# Fail on any error.
+set -e
+# Display commands being run.
+set -x
+
 if [ -z "$ANDROID_NDK" ]; then
   echo "Please set ANDROID_NDK to the Android NDK folder"
   exit 1
@@ -44,7 +49,7 @@ function build_CallbackHandler {
   popd
 }
 
-build_CallbackHandler armeabi-v7a 16
+build_CallbackHandler armeabi-v7a 21
 build_CallbackHandler arm64-v8a 21
-build_CallbackHandler x86 16
+build_CallbackHandler x86 21
 build_CallbackHandler x86_64 21

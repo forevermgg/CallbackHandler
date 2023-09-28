@@ -12,6 +12,7 @@
 #include "log/logging.h"
 #include "memory/mutex.h"
 #include "generate.h"
+#include "absl/strings/string_view.h"
 
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_mgg_callbackhandler_MainActivity_stringFromJNI(JNIEnv* env,
@@ -20,10 +21,10 @@ Java_com_mgg_callbackhandler_MainActivity_stringFromJNI(JNIEnv* env,
   FOREVER::JNI::SetJavaVM(env);
   FOREVER::UTIL::GetPlatformAppByName(env);
   FOREVER::UTIL::CheckAndClearJniExceptions(env);
-  std::string hello = "Hello from C++";
   auto test_env = VirtualMachineEnv::get().getEnvironment();
   test_env = FOREVER::JNI::AttachCurrentThread();
   test_env = FOREVER::JNI::GetJNIEnv();
   FOREVER::UTIL::ReleaseClasses(env);
-  return test_env->NewStringUTF(hello.c_str());
+  constexpr absl::string_view hello = "Hello from C++";
+  return test_env->NewStringUTF(std::string(hello).c_str());
 }

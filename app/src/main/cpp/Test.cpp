@@ -44,7 +44,7 @@ void Test::scheduleCallback(CallbackHandler *handler, void *user,
     mCallbacks.emplace_back(user, callback);
     decltype(mCallbacks) callbacks;
     std::swap(callbacks, mCallbacks);
-    for (auto &item : callbacks) {
+    for (auto &item : mCallbacks) {
       item.second(item.first);
     }
   }

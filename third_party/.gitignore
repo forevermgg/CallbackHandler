@@ -1,0 +1,15 @@
+/abseil_cpp/
+/abseil_cpp/*
+
+/flatbuffers/
+/flatbuffers/*
+
+/leveldb/
+/leveldb/*
+
+/snappy/
+/snappy/*
+
+/googletest/
+/googletest/*
+

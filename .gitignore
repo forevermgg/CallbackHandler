@@ -16,8 +16,4 @@ local.properties
 /.idea/
 */build
 /app/build/
-/third_party/flatbuffers/
-/third_party/leveldb/
-/third_party/snappy/
 /output/
-/third_party/googletest/

@@ -58,6 +58,12 @@ apply(
 apply(
     "snappy.gradle"
 )
+apply(
+    "abseil-cpp.gradle"
+)
+apply(
+    "glog.gradle"
+)
 dependencies {
 
     implementation(libs.core.ktx)

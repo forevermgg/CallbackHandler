@@ -1,0 +1,26 @@
+// https://github.com/google/minimalloc/blob/main/CMakeLists.txt
+afterEvaluate {
+    // Define a Task that will add a leveldb dependency, downloading
+    // the source from GitHub if needed.
+    println "projectDir:" + projectDir
+    println "rootDir:" + rootDir
+    println "buildDir:" + buildDir
+    task gitCheckOutAbseil {
+        // Locate or download snappy.
+        def abseilDir = "$rootDir/external/abseil-cpp"
+        def abseilFolder = new File(abseilDir)
+        if (!abseilFolder.exists()) {
+            exec {
+                executable 'git'
+                args 'clone',
+                        '--branch',
+                        '20230802.1',
+                        '--depth',
+                        '1',
+                        'https://github.com/abseil/abseil-cpp.git',
+                        abseilDir
+            }
+        }
+    }
+    preBuild.dependsOn gitCheckOutAbseil
+}

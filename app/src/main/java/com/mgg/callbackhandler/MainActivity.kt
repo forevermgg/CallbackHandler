@@ -34,6 +34,10 @@ class MainActivity : AppCompatActivity() {
         test.consumer(Handler(Looper.getMainLooper())) {
             Timber.e("Test JavaCallBack")
         }
+        test.consumer(Handler(Looper.getMainLooper())) {
+            Timber.e("Test JavaCallBack2")
+        }
+        test.producer()
         test.producer()
         test.setCompletedCallback(Handler(Looper.getMainLooper())) {
             Timber.e("Test JavaSetCompletedCallback")

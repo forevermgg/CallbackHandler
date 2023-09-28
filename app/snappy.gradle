@@ -1,5 +1,5 @@
 afterEvaluate {
-    // Define a Task that will add a leveldb dependency, downloading
+    // Define a Task that will add a snappy dependency, downloading
     // the source from GitHub if needed.
     println "projectDir:" + projectDir
     println "rootDir:" + rootDir
@@ -22,7 +22,7 @@ afterEvaluate {
         }
     }
     // https://zhuanlan.zhihu.com/p/112294419
-    task copyTask(type: Copy) {
+    tasks.register('copyTask', Copy) {
         from "$rootDir/third_party/snappy-stubs-public.h"
         into "$rootDir/third_party/snappy"
     }

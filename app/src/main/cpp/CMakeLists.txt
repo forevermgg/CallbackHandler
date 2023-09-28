@@ -1,7 +1,9 @@
 # Sets the minimum CMake version required for this project.
-cmake_minimum_required(VERSION 3.22.1)
+cmake_minimum_required(VERSION 3.22.1 FATAL_ERROR)
 include(CheckEnv.cmake)
 include(Paths.cmake)
+include(Project.cmake)
+include(Platform.cmake)
 project("callbackhandler" C CXX)
 # RE2 needs Pthreads on non-WIN32
 find_package(Threads)

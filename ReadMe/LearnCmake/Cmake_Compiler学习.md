@@ -47,6 +47,35 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 ```
 这样就会禁用编译器的特定扩展。
 
+### CMAKE_CXX_COMPILER_LOADED
+CMAKE_CXX_COMPILER_LOADED是一个CMake内部变量，用于指示是否已加载C++编译器。如果已加载，则该变量的值为TRUE，否则为FALSE。
+CMake需要知道使用的编译器和编译器的选项，以便正确地生成可执行文件、库和对象文件。CMAKE_CXX_COMPILER_LOADED变量用于检查是否已加载C++编译器。如果未加载，则需要使用find_package或set命令指定编译器的位置和选项。
+
+例如，以下代码段检查是否已加载C++编译器，并在未加载时使用set命令指定编译器的位置和选项：
+
+```cmake
+if(NOT CMAKE_CXX_COMPILER_LOADED)
+set(CMAKE_CXX_COMPILER "/usr/bin/g++")
+set(CMAKE_CXX_FLAGS "-Wall")
+endif()
+```
+这将检查是否已加载C++编译器，如果未加载，则使用set命令指定编译器的位置和-Wall选项。
+```cmake
+message(STATUS "Is the C++ compiler loaded? ${CMAKE_CXX_COMPILER_LOADED}")
+if(CMAKE_CXX_COMPILER_LOADED)
+  message(STATUS "The C++ compiler ID is: ${CMAKE_CXX_COMPILER_ID}")
+  message(STATUS "Is the C++ from GNU? ${CMAKE_COMPILER_IS_GNUCXX}")
+  message(STATUS "The C++ compiler version is: ${CMAKE_CXX_COMPILER_VERSION}")
+endif()
+
+message(STATUS "Is the C compiler loaded? ${CMAKE_C_COMPILER_LOADED}")
+if(CMAKE_C_COMPILER_LOADED)
+  message(STATUS "The C compiler ID is: ${CMAKE_C_COMPILER_ID}")
+  message(STATUS "Is the C from GNU? ${CMAKE_COMPILER_IS_GNUCC}")
+  message(STATUS "The C compiler version is: ${CMAKE_C_COMPILER_VERSION}")
+endif()
+```
+
 ### CMAKE_CXX_COMPILER_ID
 `CMAKE_CXX_COMPILER_ID`是一个`CMake`变量，用于表示当前所使用的`C++`编译器的标识符。
 该变量的值通常是根据所使用的编译器自动设置的，例如：`GCC`、`Clang`、`MSVC` 等。通过读取 `CMAKE_CXX_COMPILER_ID` 变量的值，可以在`CMake`构建过程中根据不同的编译器采取相应的操作或配置。
@@ -58,6 +87,23 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 if (NOT "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     message(WARNING "Fuzzing builds are only supported with Clang")
   endif (NOT "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+```
+
+```cmake
+# let the preprocessor know about the compiler vendor
+if(CMAKE_CXX_COMPILER_ID MATCHES Intel)
+  target_compile_definitions(hello-world PUBLIC "IS_INTEL_CXX_COMPILER")
+endif()
+if(CMAKE_CXX_COMPILER_ID MATCHES GNU)
+  target_compile_definitions(hello-world PUBLIC "IS_GNU_CXX_COMPILER")
+endif()
+if(CMAKE_CXX_COMPILER_ID MATCHES PGI)
+  target_compile_definitions(hello-world PUBLIC "IS_PGI_CXX_COMPILER")
+endif()
+if(CMAKE_CXX_COMPILER_ID MATCHES XL)
+  target_compile_definitions(hello-world PUBLIC "IS_XL_CXX_COMPILER")
+endif()
+# etc ...
 ```
 
 ### CMAKE_CXX_WARNING_LEVEL
@@ -160,4 +206,133 @@ if(CMAKE_BUILD_TYPE STREQUAL RelWithDebInfo)
     # headers from Gradle using the `debug`/`release` variant names, so rename
     set(buildTypeCap "Release")
 endif()
+```
+```cmake
+# we default to Release build type
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
+endif()
+
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+
+message(STATUS "C flags, Debug configuration: ${CMAKE_C_FLAGS_DEBUG}")
+message(STATUS "C flags, Release configuration: ${CMAKE_C_FLAGS_RELEASE}")
+message(STATUS "C flags, Release configuration with Debug info: ${CMAKE_C_FLAGS_RELWITHDEBINFO}")
+message(STATUS "C flags, minimal Release configuration: ${CMAKE_C_FLAGS_MINSIZEREL}")
+
+message(STATUS "C++ flags, Debug configuration: ${CMAKE_CXX_FLAGS_DEBUG}")
+message(STATUS "C++ flags, Release configuration: ${CMAKE_CXX_FLAGS_RELEASE}")
+message(STATUS "C++ flags, Release configuration with Debug info: ${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
+message(STATUS "C++ flags, minimal Release configuration: ${CMAKE_CXX_FLAGS_MINSIZEREL}")
+```
+### CMAKE_HOST_SYSTEM_PROCESSOR
+CMAKE_HOST_SYSTEM_PROCESSOR是一个CMake内部变量，用于指示主机系统的处理器类型。它的值是一个字符串，表示主机系统的处理器类型。例如，x86_64表示64位x86处理器，armv7l表示ARMv7处理器。
+```cmake
+# let the preprocessor know about the host processor architecture
+if(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "i386")
+  message(STATUS "i386 architecture detected")
+elseif(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "i686")
+  message(STATUS "i686 architecture detected")
+elseif(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "x86_64")
+  message(STATUS "x86_64 architecture detected")
+else()
+  message(STATUS "host processor architecture is unknown")
+endif()
+
+target_compile_definitions(arch-dependent
+  PUBLIC "ARCHITECTURE=${CMAKE_HOST_SYSTEM_PROCESSOR}"
+  )
+```
+
+### CMAKE_SIZEOF_VOID_P
+CMAKE_SIZEOF_VOID_P是一个CMake内部变量，用于指示指针的大小。它的值是一个整数，表示指针的大小（以字节为单位）。
+
+CMAKE_SIZEOF_VOID_P变量通常用于在CMake脚本中根据指针大小执行不同的操作。例如，以下代码段检查指针大小，并根据指针大小设置不同的编译选项：
+```cmake
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+set(CMAKE_CXX_FLAGS "-m64")
+endif()
+if(CMAKE_SIZEOF_VOID_P EQUAL 4)
+set(CMAKE_CXX_FLAGS "-m32")
+endif()
+```
+这将检查指针大小，并根据指针大小设置不同的编译选项。如果指针大小是8字节，则使用-m64选项进行编译。如果指针大小是4字节，则使用-m32选项进行编译。
+```cmake
+# let the preprocessor know about the size of void *
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+  target_compile_definitions(arch-dependent PUBLIC "IS_64_BIT_ARCH")
+  message(STATUS "Target is 64 bits")
+else()
+  target_compile_definitions(arch-dependent PUBLIC "IS_32_BIT_ARCH")
+  message(STATUS "Target is 32 bits")
+endif()
+```
+### cmake_host_system_information
+cmake_host_system_information命令用于获取主机系统的信息。它的语法如下：
+```cmake
+cmake_host_system_information(<variable> [QUERY])
+```
+其中，variable是用于存储查询结果的变量的名称，QUERY是一个可选的查询参数，用于指定要查询的信息类型。如果未指定QUERY，则将返回所有可用的信息。
+cmake_host_system_information命令可用于查询各种主机系统信息，例如处理器类型、操作系统类型、操作系统版本等。例如，以下代码段使用cmake_host_system_information命令查询主机系统的处理器类型和操作系统类型：
+```cmake
+cmake_host_system_information(HOST_INFO QUERY PROCESSOR_ARCHITECTURE OPERATING_SYSTEM_NAME)
+message(STATUS "Host processor architecture: ${HOST_INFO_PROCESSOR_ARCHITECTURE}")
+message(STATUS "Host operating system name: ${HOST_INFO_OPERATING_SYSTEM_NAME}")
+```
+这将查询主机系统的处理器类型和操作系统类型，并将结果存储在HOST_INFO变量中。然后，使用message命令将查询结果输出到日志中。
+
+```cc
+#pragma once
+
+#define NUMBER_OF_LOGICAL_CORES   @_NUMBER_OF_LOGICAL_CORES@
+#define NUMBER_OF_PHYSICAL_CORES  @_NUMBER_OF_PHYSICAL_CORES@
+#define TOTAL_VIRTUAL_MEMORY      @_TOTAL_VIRTUAL_MEMORY@
+#define AVAILABLE_VIRTUAL_MEMORY  @_AVAILABLE_VIRTUAL_MEMORY@
+#define TOTAL_PHYSICAL_MEMORY     @_TOTAL_PHYSICAL_MEMORY@
+#define AVAILABLE_PHYSICAL_MEMORY @_AVAILABLE_PHYSICAL_MEMORY@
+#define IS_64BIT                  @_IS_64BIT@
+#define HAS_FPU                   @_HAS_FPU@
+#define HAS_MMX                   @_HAS_MMX@
+#define HAS_MMX_PLUS              @_HAS_MMX_PLUS@
+#define HAS_SSE                   @_HAS_SSE@
+#define HAS_SSE2                  @_HAS_SSE2@
+#define HAS_SSE_FP                @_HAS_SSE_FP@
+#define HAS_SSE_MMX               @_HAS_SSE_MMX@
+#define HAS_AMD_3DNOW             @_HAS_AMD_3DNOW@
+#define HAS_AMD_3DNOW_PLUS        @_HAS_AMD_3DNOW_PLUS@
+#define HAS_IA64                  @_HAS_IA64@
+#define OS_NAME                  "@_OS_NAME@"
+#define OS_RELEASE               "@_OS_RELEASE@"
+#define OS_VERSION               "@_OS_VERSION@"
+#define OS_PLATFORM              "@_OS_PLATFORM@"
+```
+```cmake
+foreach(key
+  IN ITEMS
+    NUMBER_OF_LOGICAL_CORES
+    NUMBER_OF_PHYSICAL_CORES
+    TOTAL_VIRTUAL_MEMORY
+    AVAILABLE_VIRTUAL_MEMORY
+    TOTAL_PHYSICAL_MEMORY
+    AVAILABLE_PHYSICAL_MEMORY
+    IS_64BIT
+    HAS_FPU
+    HAS_MMX
+    HAS_MMX_PLUS
+    HAS_SSE
+    HAS_SSE2
+    HAS_SSE_FP
+    HAS_SSE_MMX
+    HAS_AMD_3DNOW
+    HAS_AMD_3DNOW_PLUS
+    HAS_IA64
+    OS_NAME
+    OS_RELEASE
+    OS_VERSION
+    OS_PLATFORM
+  )
+  cmake_host_system_information(RESULT _${key} QUERY ${key})
+endforeach()
+
+configure_file(config.h.in config.h @ONLY)
 ```

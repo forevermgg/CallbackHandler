@@ -1,3 +1,12 @@
+### set_target_properties
+set_target_properties命令用于设置目标的属性。它的语法如下：
+```cmake
+set_target_properties(<target> PROPERTIES <prop1> <value1> <prop2> <value2> ...)
+```
+其中，target是目标的名称，可以是可执行文件、库或自定义目标。prop1、prop2等是属性名称，value1、value2等是属性值。可以设置多个属性。
+
+set_target_properties命令可以用于设置各种属性，例如输出名称、库类型、编译选项、链接选项等。
+
 ### 1.设置目标的属性
 `set_target_properties(my_target PROPERTIES CXX_VISIBILITY_PRESET hidden)` 是一个 CMake 命令，用于设置目标（target）的 C++ 可见性（visibility）预设属性。
 
@@ -22,6 +31,11 @@
 
 `OUTPUT_NAME` 属性用于指定生成的目标文件的输出名称。在这种情况下，通过将 `OUTPUT_NAME` 设置为 "realm"，生成的目标文件将以 "realm" 作为其输出名称。
 
+例如，可以使用以下命令将生成的共享库的输出名称设置为message：
+```cmake
+set_target_properties(message-shared PROPERTIES OUTPUT_NAME "message")
+```
+这将设置message-shared库的OUTPUT_NAME属性为message。在生成共享库时，输出文件的名称将为libmessage.so（在Linux上）或message.dll（在Windows上）。
 ### 3.设置目标的属性
 `set_target_properties(Realm2JSON PROPERTIES OUTPUT_NAME "realm2json" DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})` 是一个 CMake 命令，用于设置目标（target）的属性。
 

@@ -98,7 +98,20 @@ endif()
 在上述示例中，根据`CMAKE_SYSTEM_NAME`的不同取值，可以针对特定的操作系统设置相应的编译选项。
 
 需要注意的是，`CMAKE_SYSTEM_NAME`是一个只读变量，由`CMake`自动检测并设置。在执行`CMake`构建过程之前，它将被正确配置。
-
+```cmake
+# print custom message depending on the operating system
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  message(STATUS "Configuring on/for Linux")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+  message(STATUS "Configuring on/for macOS")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  message(STATUS "Configuring on/for Windows")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "AIX")
+  message(STATUS "Configuring on/for IBM AIX")
+else()
+  message(STATUS "Configuring on/for ${CMAKE_SYSTEM_NAME}")
+endif()
+```
 ```cmake
 if(CMAKE_SYSTEM_NAME MATCHES "^Windows|Linux|Android")
     set(REALM_NEEDS_OPENSSL TRUE)

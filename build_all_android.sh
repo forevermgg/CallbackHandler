@@ -14,6 +14,18 @@ if [ -z "$ANDROID_NDK" ]; then
   exit 1
 fi
 
+if [ -z "$ANDROID_NDK" ]
+then
+  echo "ANDROID_NDK not set; please set it to the Android NDK directory"
+  exit 1
+fi
+
+if [ ! -d "$ANDROID_NDK" ]
+then
+  echo "ANDROID_NDK not a directory; did you install it under ${ANDROID_NDK}?"
+  exit 1
+fi
+
 # Directories, paths and filenames
 BUILD_DIR=build
 

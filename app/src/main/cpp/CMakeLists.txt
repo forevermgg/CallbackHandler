@@ -1,25 +1,7 @@
-# For more information about using CMake with Android Studio, read the
-# documentation: https://d.android.com/studio/projects/add-native-code.html.
-# For more examples on how to use CMake, see https://github.com/android/ndk-samples.
-
 # Sets the minimum CMake version required for this project.
 cmake_minimum_required(VERSION 3.22.1)
-# Require at least C++17
-if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 17)
-endif()
-if(${CMAKE_CXX_STANDARD} LESS 17)
-  message(FATAL_ERROR "Requires C++17 or later, but is configured for C++${CMAKE_CXX_STANDARD})")
-endif()
-#[[message("CMAKE_CURRENT_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}")
-message("CMAKE_CURRENT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}")
-message("CMAKE_CURRENT_LIST_DIR ${CMAKE_CURRENT_LIST_DIR}")
-message("CMAKE_CURRENT_LIST_FILE ${CMAKE_CURRENT_LIST_FILE}")
-message("CMAKE_CURRENT_LIST_LINE ${CMAKE_CURRENT_LIST_LINE}")]]
-# Declares the project name. The project name can be accessed via ${ PROJECT_NAME},
-# Since this is the top level CMakeLists.txt, the project name is also accessible
-# with ${CMAKE_PROJECT_NAME} (both CMake variables are in-sync within the top level
-# build script scope).
+include(CheckEnv.cmake)
+include(Paths.cmake)
 project("callbackhandler" C CXX)
 # RE2 needs Pthreads on non-WIN32
 find_package(Threads)
@@ -28,40 +10,27 @@ include_directories(common)
 include_directories(log)
 include_directories(platform/android)
 include_directories(memory)
+
 set(FLATBUFFERS_SRC_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/../../../../third_party/flatbuffers/include)
 message("FLATBUFFERS_SRC_INCLUDE ${FLATBUFFERS_SRC_INCLUDE}")
+add_subdirectory(flatbuffers)
+include_directories(${FLATBUFFERS_SRC_INCLUDE})
+FILE(GLOB Generated_SRCS generated/*.h)
+
 set(LEVELDB_SRC_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/../../../../third_party/leveldb/include)
 message("LEVELDB_SRC_INCLUDE ${LEVELDB_SRC_INCLUDE}")
-add_subdirectory(flatbuffers)
 add_subdirectory(leveldb)
-add_subdirectory(snappy)
-include_directories(${FLATBUFFERS_SRC_INCLUDE})
 include_directories(${LEVELDB_SRC_INCLUDE})
 
-include(cmake/FindAtomics.cmake)
-
+add_subdirectory(snappy)
 
 # https://github.com/google/minimalloc/blob/main/CMakeLists.txt
 set(EXTERNAL_SRC ${CMAKE_CURRENT_SOURCE_DIR}/../../../../external/)
 message("EXTERNAL_SRC = ${EXTERNAL_SRC}/abseil-cpp")
 add_subdirectory(${EXTERNAL_SRC}/abseil-cpp ${EXTERNAL_SRC}/abseil-cpp/build)
-# include(spdlog.camke)
-# add_subdirectory(${EXTERNAL_SRC}/glog ${EXTERNAL_SRC}/glog/build)
 
-FILE(GLOB Generated_SRCS generated/*.h)
-# Creates and names a library, sets it as either STATIC
-# or SHARED, and provides the relative paths to its source code.
-# You can define multiple libraries, and CMake builds them for you.
-# Gradle automatically packages shared libraries with your APK.
-#
-# In this top level CMakeLists.txt, ${CMAKE_PROJECT_NAME} is used to define
-# the target library name; in the sub-module's CMakeLists.txt, ${PROJECT_NAME}
-# is preferred for the same purpose.
-#
-# In order to load a library into your app from Java/Kotlin, you must call
-# System.loadLibrary() and pass the name of the library defined here;
-# for GameActivity/NativeActivity derived applications, the same library name must be
-# used in the AndroidManifest.xml file.
+include(cmake/FindAtomics.cmake)
+
 add_library(${CMAKE_PROJECT_NAME} SHARED
         # List C/C++ source files with relative paths to this CMakeLists.txt.
         AutoBitmap.cc
@@ -125,9 +94,6 @@ add_library("chromium_android_linker" SHARED
         linker_jni.h
         linker_jni.cc)
 
-# Specifies libraries CMake should link to your target library. You
-# can link libraries from various origins, such as libraries defined in this
-# build script, prebuilt third-party libraries, or Android system libraries.
 target_link_libraries(${CMAKE_PROJECT_NAME}
         # List libraries link to the target library
         android
@@ -146,41 +112,6 @@ target_link_libraries("chromium_android_linker"
         android
         log)
 
-
-
-file(STRINGS "${CMAKE_SOURCE_DIR}/../../../../dependencies.list" DEPENDENCIES)
-foreach(LINE IN LISTS DEPENDENCIES)
-
-  string(REGEX MATCHALL "([^=]+)" KEY_VALUE "${LINE}")
-  list(LENGTH KEY_VALUE matches_count)
-  if(matches_count STREQUAL 2)
-    list(GET KEY_VALUE 0 KEY)
-    list(GET KEY_VALUE 1 VALUE)
-    set(DEP_${KEY} ${VALUE})
-    message("KEY = ${KEY} VALUE = ${VALUE}")
-  endif()
-endforeach()
-
-# find javah
-find_package(Java COMPONENTS Development)
-if (NOT Java_Development_FOUND)
-  if (DEFINED ENV{JAVA_HOME} AND EXISTS "$ENV{JAVA_HOME}/bin/javah")
-    set(Java_JAVAH_EXECUTABLE "$ENV{JAVA_HOME}/bin/javah")
-  elseif (EXISTS "/usr/bin/javah")
-    set(Java_JAVAH_EXECUTABLE "/usr/bin/javah")
-  else()
-    message(FATAL_ERROR "Cannot find javah")
-  endif()
-endif()
-
-FUNCTION(capitalizeFirstLetter var value)
-  string(SUBSTRING ${value} 0 1 firstLetter)
-  string(TOUPPER ${firstLetter} firstLetter)
-  string(REGEX REPLACE "^.(.*)" "${firstLetter}\\1" value "${value}")
-  set(${var} "${value}" PARENT_SCOPE)
-ENDFUNCTION(capitalizeFirstLetter)
-
-
 # Hack the memmove bug on Samsung device.
 if (ARMEABI OR ARMEABI_V7A)
   message("Forevermeng ARMEABI OR ARMEABI_V7A")
@@ -197,13 +128,3 @@ if(NOT CMAKE_BUILD_TYPE)
 else()
   message("CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
 endif()
-
-
-# Check out Git submodules.
-if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.gitmodules")
-  execute_process (COMMAND git submodule update --init --recursive
-          WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-else()
-  message("gitmodules not found")
-endif()
-

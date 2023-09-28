@@ -72,34 +72,6 @@ ENDIF()
 message("CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
 
 # ---[ Download deps
-IF(NOT DEFINED CPUINFO_SOURCE_DIR)
-    MESSAGE(STATUS "Downloading cpuinfo to ${CMAKE_BINARY_DIR}/cpuinfo-source (define CPUINFO_SOURCE_DIR to avoid it)")
-    CONFIGURE_FILE(cmake/DownloadCpuinfo.cmake "${CMAKE_BINARY_DIR}/cpuinfo-download/CMakeLists.txt")
-    EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" .
-            WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/cpuinfo-download")
-    EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" --build .
-            WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/cpuinfo-download")
-    SET(CPUINFO_SOURCE_DIR "${CMAKE_BINARY_DIR}/cpuinfo-source" CACHE STRING "cpuinfo source directory")
-ENDIF()
 
 
 # ---[ Configure cpuinfo
-IF(NOT TARGET cpuinfo)
-    IF(NOT XNNPACK_USE_SYSTEM_LIBS)
-        SET(CPUINFO_BUILD_TOOLS OFF CACHE BOOL "")
-        SET(CPUINFO_BUILD_UNIT_TESTS OFF CACHE BOOL "")
-        SET(CPUINFO_BUILD_MOCK_TESTS OFF CACHE BOOL "")
-        SET(CPUINFO_BUILD_BENCHMARKS OFF CACHE BOOL "")
-        ADD_SUBDIRECTORY(
-                "${CPUINFO_SOURCE_DIR}"
-                "${CMAKE_BINARY_DIR}/cpuinfo")
-    ELSE()
-        ADD_LIBRARY(cpuinfo SHARED IMPORTED)
-        FIND_LIBRARY(CPUINFO_LIBRARY cpuinfo)
-        IF(NOT CPUINFO_LIBRARY)
-            MESSAGE(FATAL_ERROR "Cannot find cpuinfo")
-        ENDIF()
-        SET_PROPERTY(TARGET cpuinfo PROPERTY IMPORTED_LOCATION "${CPUINFO_LIBRARY}")
-        SET_PROPERTY(TARGET cpuinfo PROPERTY IMPORTED_IMPLIB "${CPUINFO_LIBRARY}")
-    ENDIF()
-ENDIF()

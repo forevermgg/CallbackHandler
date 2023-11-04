@@ -19,7 +19,6 @@ add_library(utils STATIC IMPORTED)
 set_target_properties(utils PROPERTIES IMPORTED_LOCATION
         ${FILAMENT_DIR}/lib/${ANDROID_ABI}/libutils.a)
 
-
 add_library(archive STATIC archive.cpp zip.cpp lzma.cpp)        
 ```
 ### add_library SHARED

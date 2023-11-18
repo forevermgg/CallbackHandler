@@ -106,6 +106,8 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         flatbuffers
         snappy
         leveldb
+        absl::log
+        absl::base
         absl::flags_parse
         absl::flags
         absl::statusor

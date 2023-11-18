@@ -31,9 +31,13 @@ set(EXTERNAL_SRC ${CMAKE_CURRENT_SOURCE_DIR}/../../../../external/)
 message("EXTERNAL_SRC = ${EXTERNAL_SRC}/abseil-cpp")
 add_subdirectory(${EXTERNAL_SRC}/abseil-cpp ${EXTERNAL_SRC}/abseil-cpp/build)
 
+find_package(curl REQUIRED CONFIG)
+find_package(jsoncpp REQUIRED CONFIG)
+
 include(cmake/FindAtomics.cmake)
 
-add_library(${CMAKE_PROJECT_NAME} SHARED
+add_library(${CMAKE_PROJECT_NAME}
+        SHARED
         # List C/C++ source files with relative paths to this CMakeLists.txt.
         AutoBitmap.cc
         common/macros.h
@@ -105,6 +109,8 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         absl::flags_parse
         absl::flags
         absl::statusor
+        curl::curl
+        jsoncpp::jsoncpp
         log)
 if(ANDROID)
   message("Forevermeng")

@@ -18,6 +18,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
+                arguments += "-DANDROID_STL=c++_shared"
                 cppFlags += "-std=c++17"
             }
         }
@@ -48,6 +49,8 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+    buildFeatures.prefab = true
 }
 apply(
     "flatbuffers.gradle"
@@ -78,4 +81,7 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     implementation("com.jakewharton.timber:timber:5.0.1")
     implementation("com.google.flatbuffers:flatbuffers-java:23.5.26")
+    implementation("com.android.ndk.thirdparty:curl:7.79.1-beta-1")
+    implementation("com.android.ndk.thirdparty:jsoncpp:1.9.5-beta-1")
+    implementation("com.android.ndk.thirdparty:openssl:1.1.1l-beta-1")
 }

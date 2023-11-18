@@ -1,0 +1,25 @@
+afterEvaluate {
+    // Define a Task that will add a curl dependency, downloading
+    // the source from GitHub if needed.
+    println "projectDir:" + projectDir
+    println "rootDir:" + rootDir
+    println "buildDir:" + buildDir
+    task gitCheckOutCurl {
+        // Locate or download Curl.
+        def curlDir = "$rootDir/external/curl"
+        def curlFolder = new File(curlDir)
+        if (!curlFolder.exists()) {
+            exec {
+                executable 'git'
+                args 'clone',
+                        '--branch',
+                        'curl-8_4_0',
+                        '--depth',
+                        '1',
+                        'https://github.com/curl/curl.git',
+                        curlDir
+            }
+        }
+    }
+    preBuild.dependsOn gitCheckOutCurl
+}

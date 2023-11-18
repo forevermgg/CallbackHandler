@@ -59,6 +59,9 @@ apply(
     "snappy.gradle"
 )
 apply(
+    "curl.gradle"
+)
+apply(
     "abseil-cpp.gradle"
 )
 apply(

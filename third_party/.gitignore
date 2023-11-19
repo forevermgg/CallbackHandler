@@ -17,3 +17,8 @@
 /protobuf/*/*
 /protobuf/*
 /protobuf/bazel-protobuf/
+/protobuf/third_party/abseil-cpp/
+/protobuf/third_party/googletest/
+/protobuf/third_party/jsoncpp/
+/protobuf/third_party/lunit/
+/protobuf/third_party/utf8_range/

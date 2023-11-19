@@ -59,7 +59,7 @@ afterEvaluate {
     task generateFbsCpp(type: Exec) {
         def flatbuffersExeDir = "$rootDir/third_party/flatbuffers/flatc_build"
         def inputDir = file("$projectDir/src/main/fbs")
-        def outputCppDir = file("$projectDir/src/main/cpp/generated/")
+        def outputCppDir = file("$projectDir/src/main/cpp/generated/fbs/")
         def fbsFiles = layout.files { file(inputDir).listFiles() }.filter { File f -> f.name.endsWith(".fbs") }.toList()
         ignoreExitValue(true)
 
@@ -87,7 +87,7 @@ afterEvaluate {
     task generateFbsKotlin(type: Exec) {
         def flatbuffersExeDir = "$rootDir/third_party/flatbuffers/flatc_build"
         def inputDir = file("$projectDir/src/main/fbs")
-        def outputKotlinDir = file("$projectDir/src/main/java/generated/")
+        def outputKotlinDir = file("$projectDir/src/main/java/generated/fbs/")
         def fbsFiles = layout.files { file(inputDir).listFiles() }.filter { File f -> f.name.endsWith(".fbs") }.toList()
         ignoreExitValue(true)
 

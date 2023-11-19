@@ -14,5 +14,6 @@
 /googletest/*
 
 /protobuf/
+/protobuf/*/*
 /protobuf/*
-
+/protobuf/bazel-protobuf/

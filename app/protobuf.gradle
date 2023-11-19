@@ -66,17 +66,16 @@ afterEvaluate {
     task generateProtoCpp(type: Exec) {
         def protobufExeDir = "$rootDir/third_party/protobuf/bazel-build"
         def inputDir = file("$projectDir/src/main/proto")
-        def outputCppDir = file("$projectDir/src/main/cpp/generated/")
+        def outputCppDir = file("$projectDir/src/main/cpp/generated/proto/")
         def protoFiles = layout.files { file(inputDir).listFiles() }.filter { File f -> f.name.endsWith(".proto") }.toList()
         ignoreExitValue(true)
 
         standardOutput = new ByteArrayOutputStream()
         errorOutput = new ByteArrayOutputStream()
-        def commandLineArgs = [protobufExeDir + "/protoc", '--cpp_out', outputCppDir]
+        def commandLineArgs = ["${protobufExeDir}/protoc", "-I=${inputDir}", "--cpp_out=${outputCppDir}"]
         protoFiles.forEach {
             commandLineArgs.add(it.path)
         }
-        println "commandLineArgs:" + commandLineArgs
         commandLine commandLineArgs
 
         doFirst {
@@ -94,7 +93,7 @@ afterEvaluate {
     task generateProtoKotlin(type: Exec) {
         def protobufExeDir = "$rootDir/third_party/protobuf/bazel-build"
         def inputDir = file("$projectDir/src/main/proto")
-        def outputKotlinDir = file("$projectDir/src/main/java/generated/")
+        def outputKotlinDir = file("$projectDir/src/main/java/generated/proto/")
         def protoFiles = layout.files { file(inputDir).listFiles() }.filter { File f -> f.name.endsWith(".proto") }.toList()
         ignoreExitValue(true)
 
@@ -103,8 +102,7 @@ afterEvaluate {
 
         setErrorOutput(errorOutput)
         setStandardOutput(standardOutput)
-
-        def commandLineArgs = [protobufExeDir + "/protoc", '--java_out', outputKotlinDir]
+        def commandLineArgs = ["${protobufExeDir}/protoc", "-I=${inputDir}", "--java_out=${outputKotlinDir}"]
         protoFiles.forEach {
             commandLineArgs.add(it.path)
         }

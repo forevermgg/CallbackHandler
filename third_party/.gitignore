@@ -13,3 +13,6 @@
 /googletest/
 /googletest/*
 
+/protobuf/
+/protobuf/*
+

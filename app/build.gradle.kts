@@ -56,6 +56,9 @@ apply(
     "flatbuffers.gradle"
 )
 apply(
+    "protobuf.gradle"
+)
+apply(
     "leveldb.gradle"
 )
 apply(
@@ -84,4 +87,6 @@ dependencies {
     implementation("com.android.ndk.thirdparty:curl:7.79.1-beta-1")
     implementation("com.android.ndk.thirdparty:jsoncpp:1.9.5-beta-1")
     implementation("com.android.ndk.thirdparty:openssl:1.1.1l-beta-1")
+    implementation("com.google.protobuf:protobuf-java:3.25.0")
+    implementation("com.google.protobuf:protobuf-java-util:3.25.0")
 }
